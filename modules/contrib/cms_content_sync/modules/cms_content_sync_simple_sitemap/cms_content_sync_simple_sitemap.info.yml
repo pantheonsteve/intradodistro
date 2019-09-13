@@ -1,0 +1,14 @@
+name: CMS Content Sync - Simple Sitemap
+type: module
+description: Provides support for the Simple Sitemap (https://www.drupal.org/project/simple_sitemap) module.
+package: CMS Content Sync
+# core: 8.x
+dependencies:
+  - cms_content_sync:cms_content_sync
+  - simple_sitemap:simple_sitemap
+
+# Information added by Drupal.org packaging script on 2019-08-16
+version: '8.x-1.22'
+core: '8.x'
+project: 'cms_content_sync'
+datestamp: 1565937208

@@ -1,0 +1,250 @@
+v1.22
+- Added support for IMCE.
+- Improved Drush command help text.
+- Fixed an issue with the user_revision field for core versions before 8.7.x.
+- Fixed notices for non existent pools.
+
+v1.21
+- Added support for entity embed in CKEditor.
+- Fixed an issue when the CMS Content Sync user did not exist on the importing site.
+- Fixed notices on while importing entities.
+
+v1.20
+- Added option to filter content import by taxonomy terms.
+- Updated acquia content hub migration to use new taxonomy term filter.
+- Fixed implementation of "Save and export" node action.
+
+v1.19
+- Added support for panelizer, video and social_media modules
+- Added option to export links with their absolute URL only
+- Added option to map taxonomy terms by their name, not only their UUID to keep them unique per site
+- Added workaround for taxonomy bug: module returns string instead of int for creation date
+- Improved deletion handling of manually imported content, allowing content to be re-imported after deletion
+- Now allowing to edit menu items when editing a node even if the node itself cannot be edited
+- Acquia Content Hub migration: Fixed error for disabled entity types
+- Fixed Pool export issue when Pools were used across multiple Flows
+
+v1.18
+- Added option to allow reimport of entities which had already been imported from the content dashboard but were deleted manually afterwards
+- Added Drush 9 support for the command "update-flows"
+- Added "Save and export" button to entity types which are configured to be exported manually
+- Added a change for the submit button label if the entity is configured to be exported automatically
+- Added support for IMCE
+- Improved content dashboard styles
+- Fixed issue with the form library inclusion
+- Fixed the Drush command to update all flows by extending forbidden fields to also respect entity type properties
+- Fixed language duplicates when using the sync state views filter
+- Fixed notices within the flow form
+- Fixed fatal error during config import
+- CMS Content Sync Migrate Acquia Content Hub: Added Drush support for the Migration from Acquia Content Hub to CMS Content Sync
+- CMS Content Sync Health: Added aggregation to avoid translation related duplicates
+
+v1.17
+- Added support for webforms as first Config entity
+- Added smarter dependency management to resolve entity references as soon as the entities become available
+- Added support to force pull all entities for Flows
+- Added support for resetting overridden entities
+- Added support for yearonly field
+- Added "Show usage" and "Push changes" links to "Sync Status" views field
+- Added migration path from Acquia Content Hub
+- Added pool filter when editing an entity if more than 10 pools are available
+- Improved version handling at the Sync Core for significantly better performance
+- Simplified Flow form by hiding 80%-90% of all settings by default
+- Improved user messages
+- Improved paragraph field widget support to cover custom paragraph widgets
+- Fixed notices and improved codestyle
+- Fixed issue with overwrites when using the same entity in multiple Flows
+- Fixed issue with taxonomy tree weights
+- Fixed issue with dynamic entity reference at status entities not being set for cross sync
+- Fixed issue with "is source site" flag not being set correctly for cross sync
+- Fixed issue with entities being listed as dependencies even without "Export referenced entity" being set
+- Improved Flow overview description below the table
+
+v1.16
+- Added support for field collection translations.
+- Added fix for nested field collections.
+- Added content title filter to health dashboard - entity status view.
+- Added fix to skip reexport of imported entities if the update behavior is set to UPDATE_FORCE_AND_FORBID_EDITING or UPDATE_UNLESS_OVERRIDDEN.
+- Added Drush commands to check for entity flags for Drush 8+9.
+- Added functionality to show version mismatches on the flow overview page.
+- Added deletion for related status entities on pool deletion.
+- Added check to prevent bulk deletion if imported entities cannot be deleted.
+- Extended views sync state field to mark locally overridden entities.
+- Improved entity status views integration.
+- Improved views integration to filter for locally overridden entities.
+- Improved Taxonomy handler to ensure that the parent entity exists.
+- Improve logging.
+- Fixed notice for nested referenced entities.
+- Fixed an issue with disabled Flows or Pools still being referenced
+- Fixed exception by saving status entities after setting their timestamps.
+- Issue #3035787 by chipway: All dependencies must be prefixed
+
+v1.15
+- Improved file handler to allow any field properties
+- Fixed field collections implementation that broke the Default Entity Handler
+
+v1.14
+- Added support for Config Pages - https://www.drupal.org/project/config_pages
+- Added support for Entity Construction Kit (ECK) - https://www.drupal.org/project/eck
+- Added support for Translatable menu link uri - https://www.drupal.org/project/translatable_menu_link_uri
+- Added the possibility to save a flow without exporting it.
+- Added error handler to ->serialize() function on export.
+- Added log message filter for Sync Core to display messages regarding the current site only.
+- Improved UX for flow status in Flow list when overridden.
+- Removed preview generation for entities unless the preview option was explicitly set.
+- Adjusted Drush command description for "drush content-sync-pull-entities"
+- Refactored selection of export Flows to improve UI display of push actions.
+- Fixed module update message always being shown on health dashboard.
+- Fixed an issue that lead to the export of referenced entities although they have been marked as overwritten locally.
+- Fixed an issue that lead to a fatal error on the health dashboard status entity overview when no flows or pools exists.
+- Fixed an issue that pools that were not set to import manually were shown at the import dashboard.
+- Fixed the default value for the mergeable entity reference field handler.
+- Fixed reset status action for sync health dashboard.
+- Fixed loading of referenced entities during import.
+- Fixed an error at overview pages for entities that don't have a UUID.
+- Fixed an issue with the deletion of translations.
+
+v1.13
+- Added "Health Dashboard" with different levels of detail for more transparency over the synchronization. Just enable the health submodule to use it.
+- Added list of supported entity types on the site to the Introduction page.
+- Added "Push All" action to Flows.
+- Removed export of disabled Flows.
+- Added various flags to the status entity to indicate different kinds of failures for the Health Dashboard.
+- Added retry handler for failed 404 requests.
+- Added support for the "iframe" and "range" module.
+- Hiding entity types from the Flow form that are not supported due to missing entity type handler or missing field handlers for required fields.
+- Fixed validation against maximum Collection name length in the Sync Core.
+- Fixed greedy Pool dependency from Flows that caused Flows to be deleted when Pools were deleted.
+- Fixed issue with multilingual menu items not being exported on first try.
+- Fixed issue with menu items not being exported on first try if "export" is set to "all".
+- Fixed Flows not being available if they were only activated via settings.php.
+- Various fixes for notices.
+
+v1.12
+- Refactored views filter implementation.
+- Added views filter option for "Update waiting to be exported".
+- Added support for number fields.
+- Added support for daterange fields.
+- Added permission control for the import dashboard at the settings form.
+- Added "Show usage" operation on entity overview pages.
+- Fixed overridden "status" value at flow forms.
+- Fixed DELETE returning 404 when entity type version changed without entity update.
+- Fixed notice when saving entities without value assignment.
+- Fixed issue with pools failing export when they were exported without base_url before.
+- Fixed dependency bug that would delete Flows when Pools are deleted.
+
+v1.11
+- Added support for the "Simple Sitemap" module
+- Added support for pathauto.
+- Added field reference handler for views and blocks
+- Added support for field collections
+- Added permission for the "Show version mismatches" button
+- Added events to allow other modules to add additional meta information per entity to export and import.
+- Refactored menu synchronization to avoid intransparent dependency on "tokens" module
+- Switched from blacklisting to whitelisting for entity types to avoid confusion
+- Improved language handling with the "langcode" property
+- Fixed bug that prevented changing the language of an already existing entity which does not have a translation yet.
+- Fixed bug that didn't display menu items as disabled on content slaves when editing a content
+- Fixed display of referenced bundles when editing a flow
+
+v1.10
+- Improved Drush commands naming
+- Added module version to reporting
+- Added action to pools to reset status entities
+- Added Drush command to reset status entities for all or a specific pool
+- Added option to node handler to allow explicit unpublishing
+- Improved menu handler: If no menu is selected at the "restrict menu" option, all menus are allowed
+- Added validation to prevent AJAX errors at the Flow form
+- Now explicitly allowing entity path (alias) update
+- Added button to show usage of an entity when editing it
+- Added button to show version differences per entity type at the Flow form and Entity edit form, showing field differences
+- Added the possibility to set flows active/inactive
+
+v1.9
+- Added the possibility to pull all available entities from a flow
+  - via the UI
+  - via Drush 8 & 9
+- Added functionality to reset entities when the overwrite checkbox gets unset
+- Fixed a bug with the --force option for the Drush 8 command "drush content-sync-export"
+- Improved permission handling for push operation
+- Improved import Dashboard by adding filters and sort functionality
+- Improved the message that gets shown when no entity export is required
+- Added validation that prevents pool deletion if a pool is used within a flow
+- Fixed a configuration file name
+- Added basic auth as login option for the Sync Core
+- Improved install routine by allowing entities to be created during installation
+
+v1.8
+- Added validation for CMS Content Sync Base URL during Drush export
+- Removed caching for views field integration
+- Added event dispatcher after entity export/import
+- Views integration - Ensure that the synced entity is set
+- Added Drush 9 support
+- Adjusted taxonomy handling to new Drupal 8.6 table schema
+- Added button and drush command to login to all connections at the sync core
+- Added check to ensure the site id does not already exist in the sync core
+- Added support for address field
+- Fixed bug that caused an incorrect pool assignment when paragraphs were added, removed and reordered simultaneously
+- Fixed function nesting exception in combination with the conditional fields module
+
+v1.7
+- Improved views integration
+- Changed "Manual Import Dashboard" date format
+- Added validation for CMS Content Sync base url link
+- Added version upgrade validation
+- Fixed Flow form display error
+- Fixed entity type version comparison
+
+v1.6
+- Added stable version of the manual content import dashboard
+- Added media entity handler
+- Improved javascript to also hide field groups if a entity is not flagged as overwritten
+- Updated manual export to allow force push of entities
+
+v1.5
+- Renamed and refactor to CMS Content Sync
+- Improved "Manual Import Dashboard"
+- Added submodule "CMS Content Sync - Developer"
+- Added check for configuration changes within submodule "CMS Content Sync - Developer"
+- Added menu link handler
+
+v1.4
+- Added manual import handler and dashboard in BETA
+- Added user reference field handler
+- Added support for Bricks (https://www.drupal.org/project/bricks)
+- Refactored entity reference handler
+- Fixed taxonomy tree movements
+- Fixed various minor bugs
+
+v1.3
+- Added "Taxonomy Term" entity handler to resolve hierarchy issues
+- Fixed export for changed pools sometimes being ignored
+- Fixed cross sync re-exporting the same entity again when being changed
+- Fixed "overwrite" checkbox sometimes not being saved for nested paragraphs
+- Added bulk export for configuration
+
+v1.2
+- Added check if a default value for a pool within the flow form is already set, if not the pool is set to forbidden
+- Automatically add all pools as dependencies to flow configurations to ensure that pools are imported before flows
+- Changed base field definition of meta info for "last_import" and "last_export" from integer to timestamp
+- Added submodule "CMS Content Sync Views" to provide a views integration for meta info entities
+- Updated Paragraphs version hint. The dev version is not longer needed since this commit got merged to the latest stable version 8.x-1.3: https://www.drupal.org/project/paragraphs/issues/2868155#comment-12610258
+- Added batch export operation for "Pool" and "Flow" export to avoid timeouts while exporting within the user interface
+- Added color_field_type field handler
+- Added path handler
+- Added support for menu_token
+- Removed unused code
+
+v1.1
+- Improved robustness by adding various sanity checks
+- Fixed bug that may lead to some pools not being used on export if multiple pools are used for the same entity
+- Fixed bug that lead to incorrect default "override" checks when using nested paragraphs with subform editing
+- Fixed bug that may lead to incorrect language handling if only one language was available on subsites
+- Improved codestyle
+- Improved documentation
+- Added field handler for "telephone", "soundcloud", "color_field_type", "path" and "menu_tokens"
+- Added "Debug" tab, allowing you to check all sync data of a specific entity, including it's child data
+- Added option to "Disable optimizations", allowing you to sync content completely regardless of state. May be useful if your software encounters a bug and doesn't save data correctly or if you had to change / reset content and want it all to be back up again.
+
+v1.0
+- Initial release

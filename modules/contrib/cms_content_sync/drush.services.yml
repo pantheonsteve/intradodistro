@@ -1,0 +1,5 @@
+services:
+  cms_content_sync_drush.commands:
+    class: \Drupal\cms_content_sync\Commands\CMSContentSyncCommands
+    tags:
+      - { name: drush.command }

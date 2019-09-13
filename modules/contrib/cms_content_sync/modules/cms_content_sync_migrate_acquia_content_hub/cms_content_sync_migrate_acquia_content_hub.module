@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\acquia_contenthub_subscriber\Entity\ContentHubFilter;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function cms_content_sync_migrate_acquia_content_hub_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  if ($entity instanceof ContentHubFilter) {
+    $operations['create_import_flow'] = [
+      'title' => t('Migrate to CMS Content Sync'),
+      'weight' => 150,
+      'url' => Url::fromRoute('cms_content_sync_migrate_acquia_content_hub.migrate_import', [
+        'content_hub_filter_id' => $entity->id(),
+      ]),
+    ];
+  }
+}

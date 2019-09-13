@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - cms_content_sync
+    - node
+  enforced:
+    module:
+      - cms_content_sync
+id: node_cms_content_sync_export_action
+label: 'Push changes'
+type: node
+plugin: node_cms_content_sync_export_action
+configuration: {  }

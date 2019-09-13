@@ -1,0 +1,20 @@
+services:
+  encryption:
+    class: Drupal\encrypt\EncryptService
+    arguments: ['@plugin.manager.encrypt.encryption_methods', '@key.repository']
+
+  plugin.manager.encrypt.encryption_methods:
+    class: Drupal\encrypt\EncryptionMethodManager
+    parent: default_plugin_manager
+
+  encrypt.encryption_profile.manager:
+    class: Drupal\encrypt\EncryptionProfileManager
+    arguments: ['@entity_type.manager']
+
+  encrypt.uninstall_validator:
+    class: Drupal\encrypt\EncryptUninstallValidator
+    tags:
+      - { name: module_install.uninstall_validator }
+    arguments: ['@string_translation', '@encryption', '@encrypt.encryption_profile.manager']
+    lazy: true
+

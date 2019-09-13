@@ -1,0 +1,21 @@
+name: CMS Content Sync - Views
+type: module
+description: Provides a views integration for CMS Content Sync.
+package: CMS Content Sync
+# core: 8.x
+dependencies:
+  - cms_content_sync:cms_content_sync
+  - dynamic_entity_reference:dynamic_entity_reference
+  - drupal:views
+
+# Information added by Drupal.org packaging script on 2018-08-20
+# version: '8.x-1.6'
+# core: '8.x'
+# project: 'cms_content_sync'
+# datestamp: 1534775890
+
+# Information added by Drupal.org packaging script on 2019-08-16
+version: '8.x-1.22'
+core: '8.x'
+project: 'cms_content_sync'
+datestamp: 1565937208

@@ -1,0 +1,16 @@
+name: CMS Content Sync - Health
+type: module
+description: Provides health reports for content sync.
+package: CMS Content Sync
+# core: 8.x
+dependencies:
+  - cms_content_sync:cms_content_sync
+  - cms_content_sync:cms_content_sync_views
+  - dynamic_entity_reference:dynamic_entity_reference
+  - drupal:views
+
+# Information added by Drupal.org packaging script on 2019-08-16
+version: '8.x-1.22'
+core: '8.x'
+project: 'cms_content_sync'
+datestamp: 1565937208

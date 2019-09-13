@@ -1,0 +1,6 @@
+services:
+  # Event subscribers.
+  cms_content_sync_views.field_storage_subscriber:
+    class: Drupal\cms_content_sync_views\EventSubscriber\FieldStorageSubscriber
+    tags:
+      - { name: event_subscriber }

@@ -1,0 +1,16 @@
+# CMS Content Sync - Migrate Acquia Content Hub - Form
+cms_content_sync_migrate_acquia_content_hub.migrate_export:
+  path: '/admin/config/services/cms_content_sync/migrate-acquia-content-hub'
+  defaults:
+    _form: '\Drupal\cms_content_sync_migrate_acquia_content_hub\Form\MigrateExport'
+    _title: 'Migrate Acquia Content Hub (Export)'
+  requirements:
+    _permission: 'administer cms content sync'
+
+cms_content_sync_migrate_acquia_content_hub.migrate_import:
+  path: '/admin/config/services/acquia-contenthub/contenthub_filter/migrate-content-hub-filter/{content_hub_filter_id}'
+  defaults:
+    _form: '\Drupal\cms_content_sync_migrate_acquia_content_hub\Form\MigrateImport'
+    _title: 'Migrate Acquia Content Hub (Import)'
+  requirements:
+    _permission: 'administer cms content sync'

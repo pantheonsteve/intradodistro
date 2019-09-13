@@ -1,0 +1,13 @@
+publish cms content sync changes:
+  title: 'Publish cms content sync changes'
+  description: 'Publish cms content sync changes'
+
+access cms content sync content overview:
+  title: 'Access the CMS Content Sync content overview pages'
+
+administer cms content sync:
+  title: 'Administer CMS Content Sync'
+
+show entity type differences:
+  title: 'Show entity type differences'
+  description: 'Show authorized users a button which will allows them to find differences of entity types between connected sites.'

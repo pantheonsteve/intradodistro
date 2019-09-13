@@ -1,0 +1,56 @@
+{#
+/**
+ * @file
+ * Template file for the show usage modal.
+ */
+#}
+
+<h2>
+  {{ 'Failed imports'|trans }}
+</h2>
+
+<h3>{{ 'Hard failures'|trans }}</h3>
+{% if import_failures_hard.total %}
+  <div class="messages messages--error">
+    There were errors importing {{ import_failures_hard.total }} entities:
+    <ul>
+      {% if import_failures_hard.different_version %}
+        <li>{{ import_failures_hard.different_version }} times the version was different, i.e. the entity type definition from the source is different to our local definition.</li>
+      {% endif %}
+      {% if import_failures_hard.sync_error %}
+        <li>{{ import_failures_hard.sync_error }} times the Content Sync module threw an unexpected error.</li>
+      {% endif %}
+      {% if import_failures_hard.internal_error %}
+        <li>{{ import_failures_hard.internal_error }} times the Drupal API or other contrib modules threw an unexpected error.</li>
+      {% endif %}
+    </ul>
+  </div>
+{% else %}
+  <div class="messages messages--status">
+    No hard failures.
+  </div>
+{% endif %}
+
+<h3>{{ 'Soft failures'|trans }}</h3>
+{% if import_failures_soft.total %}
+  <div class="messages messages--warning">
+    The import of {{ import_failures_soft.total }} entities have been ignored as configured:
+    <ul>
+      {% if import_failures_soft.handler_denied %}
+        <li>{{ import_failures_soft.handler_denied }} times the handler was configured to explicitly ignore this entity (e.g. it's not published).</li>
+      {% endif %}
+      {% if import_failures_soft.no_flow %}
+        <li>{{ import_failures_soft.no_flow }} times there was no Flow configured to accept the entity.</li>
+      {% endif %}
+      {% if import_failures_soft.unknown_pool %}
+        <li>{{ import_failures_soft.unknown_pool }} times the remote Pool didn't exist locally anymore.</li>
+      {% endif %}
+    </ul>
+    You can ignore this information unless you're trying to figure out why a specific entity has not been imported.
+  </div>
+{% else %}
+  <div class="messages messages--status">
+    No soft failures.
+  </div>
+{% endif %}
+

@@ -1,0 +1,26 @@
+flow-form:
+  version: 1.x
+  js:
+    js/flow-form.js: {}
+  css:
+    layout:
+      css/flow-form.css: {}
+
+entity-form:
+  version: 1.x
+  js:
+    js/entity-form.js: {}
+  css:
+    layout:
+      css/entity-form.css: {}
+
+import:
+  version: 1.x
+  css:
+    layout:
+      content_dashboard/styles.bundle.css: {}
+  js:
+    content_dashboard/inline.bundle.js: {}
+    content_dashboard/polyfills.bundle.js: {}
+    content_dashboard/vendor.bundle.js: {}
+    content_dashboard/main.bundle.js: {}

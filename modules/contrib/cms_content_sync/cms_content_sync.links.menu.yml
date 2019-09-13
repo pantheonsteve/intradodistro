@@ -1,0 +1,34 @@
+entity.cms_content_sync:
+  title: 'CMS Content Sync'
+  route_name: entity.cms_content_sync.introduction
+  parent: system.admin_config_services
+  description: 'Synchronizations description'
+  weight: 100
+
+entity.cms_content_sync.flows:
+  title: 'Flows'
+  route_name: entity.cms_content_sync_flow.collection
+  parent: entity.cms_content_sync
+  description: 'The flow overview'
+  weight: 1
+
+entity.cms_content_sync.pools:
+  title: 'Pools'
+  route_name: entity.cms_content_sync_pool.collection
+  parent: entity.cms_content_sync
+  description: 'The pool overview'
+  weight: 2
+
+entity.cms_content_sync.settings:
+  title: 'Settings'
+  route_name: cms_content_sync.settings_form
+  parent: entity.cms_content_sync
+  description: 'The general cms content sync settings'
+  weight: 3
+
+entity.cms_content_sync.content:
+  title: 'Import'
+  route_name: entity.cms_content_sync.content
+  parent: system.admin_content
+  description: 'Import content'
+  weight: 100

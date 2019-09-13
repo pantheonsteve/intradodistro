@@ -1,0 +1,248 @@
+<?php
+
+/**
+ * @file
+ * Install file for cms_content_sync.
+ */
+
+use Drupal\user\Entity\User;
+use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Field\BaseFieldDefinition;
+
+/**
+ * Common modules that need to execute before us:
+ * - default : 0
+ * - menu_link_content : 1
+ * - content_translation : 10
+ * - views : 10
+ * - paragraphs : 11.
+ */
+define('CMS_CONTENT_SYNC_MODULE_WEIGHT', 50);
+
+/**
+ * Update the weight of the Content Sync module. As Content Sync depends on
+ * other modules being run before it, we need to make sure our hooks like
+ * hook_form_alter are called after everyone else's.
+ * Symptoms if not done include:
+ * - Forms are partially still editable even if it should be forbidden, e.g. menu settings.
+ */
+function _cms_content_sync_set_module_weight() {
+  module_set_weight('cms_content_sync', CMS_CONTENT_SYNC_MODULE_WEIGHT);
+}
+
+/**
+ * Re-import the given config to reset it to defaults when they're changed in
+ * the module.
+ *
+ * @param $configsNames
+ * @param string $module
+ */
+function _cms_content_sync_update_config($configsNames) {
+  $config_path    = drupal_get_path('module', 'cms_content_sync') . '/config/install';
+  $source         = new FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  foreach ($configsNames as $name) {
+    $config_storage->write($name, $source->read($name));
+  }
+}
+
+/**
+ * Implements hook_install().
+ *
+ * Creates the CMS Content Sync user and provides
+ * him with needed permissions.
+ */
+function cms_content_sync_install() {
+  $config_path    = drupal_get_path('module', 'cms_content_sync') . '/config/install';
+  $source         = new FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configsNames = [
+    'key.key.cms_content_sync',
+    'encrypt.profile.cms_content_sync',
+  ];
+
+  foreach ($configsNames as $name) {
+    $config_storage->write($name, $source->read($name));
+  }
+
+  $username = 'CMS Content Sync';
+  \Drupal::moduleHandler()->alter('cms_content_sync_username', $username);
+  $data = [
+    'userName' => $username,
+    'userPass' => user_password(),
+  ];
+
+  $user = User::create();
+  $user->setUsername($data['userName']);
+  $user->setPassword($data['userPass']);
+  $user->enforceIsNew();
+  $user->activate();
+  $user->addRole('cms_content_sync');
+  $user->save();
+
+  // Store UID in key value table.
+  \Drupal::service('keyvalue.database')->get('cms_content_sync_user')->set('uid', intval($user->id()));
+
+  $data     = cms_content_sync_encrypt_values($data);
+  $userData = \Drupal::service('user.data');
+
+  $userData->set('cms_content_sync', $user->id(), 'sync_data', $data);
+
+  _cms_content_sync_set_module_weight();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function cms_content_sync_uninstall() {
+  // Delete CMS Content Sync User.
+  $user = User::load(CMS_CONTENT_SYNC_USER_ID);
+  if (isset($user)) {
+    $user->delete();
+  }
+
+  // Delete entry from key value table.
+  \Drupal::service('keyvalue.database')->get('cms_content_sync_user')->delete('uid');
+
+  /**
+   * @var \Drupal\Core\Config\CachedStorage $config_storage
+   */
+  $config_storage = \Drupal::service('config.storage');
+
+  // Drupal doesn't delete config automatically, so we need to ensure that
+  // everything is deleted properly. Otherwise you may get a fatal error after
+  // uninstalling the module about missing REST interfaces or you may not be
+  // able to install the module again afterwards.
+  $configsNames = [
+    'key.key.cms_content_sync',
+    'encrypt.profile.cms_content_sync',
+    'rest.resource.cms_content_sync_entity_resource',
+    'rest.resource.cms_content_sync_import_entity',
+    'system.action.node_cms_content_sync_export_action',
+    'user.role.cms_content_sync',
+    'system.action.user_remove_role_action.cms_content_sync',
+    'system.action.user_add_role_action.cms_content_sync',
+  ];
+
+  foreach ($configsNames as $name) {
+    $config_storage->delete($name);
+  }
+}
+
+/**
+ * Update the module weight.
+ */
+function cms_content_sync_update_8005(&$sandbox) {
+  _cms_content_sync_set_module_weight();
+
+  return 'Updated module weight to execute hooks after most other modules.';
+}
+
+/**
+ * Implements hook_update_N();.
+ *
+ * Update the REST interface for entities to allow Basic Auth.
+ */
+function cms_content_sync_update_8004(&$sandbox) {
+  _cms_content_sync_update_config([
+    'rest.resource.cms_content_sync_entity_resource',
+  ]);
+
+  return 'Added Basic Auth as allowed authentication method to entity resource.';
+}
+
+/**
+ * Implements hook_update_N();.
+ *
+ * Delete unused rest interface configuration.
+ */
+function cms_content_sync_update_8003(&$sandbox) {
+  Drupal::configFactory()->getEditable('rest.resource.cms_content_sync_preview_resource')->delete();
+}
+
+/**
+ * Implements hook_update_N();.
+ *
+ * Add the new REST interface for manual import.
+ */
+function cms_content_sync_update_8002(&$sandbox) {
+  _cms_content_sync_update_config([
+    'rest.resource.cms_content_sync_import_entity',
+  ]);
+
+  return 'Installed manual entity import functionality.';
+}
+
+/**
+ * Implements hook_update_N();.
+ *
+ * Update field type for cms_content_sync_entity_status entity. Fields: last_export, last_import.
+ */
+function cms_content_sync_update_8001(&$sandbox) {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $bundle_of = 'cms_content_sync_entity_status';
+
+  $storage = $entity_type_manager->getStorage($bundle_of);
+  $bundle_definition = $entity_type_manager->getDefinition($bundle_of);
+  $id_key = $bundle_definition->getKey('id');
+  $table_name = $storage->getDataTable() ?: $storage->getBaseTable();
+  $database = \Drupal::database();
+  $definition_manager = \Drupal::entityDefinitionUpdateManager();
+
+  // Store the existing values for last_export.
+  $last_export_values = $database->select($table_name)
+    ->fields($table_name, [$id_key, 'last_export'])
+    ->execute()
+    ->fetchAllKeyed();
+
+  // Store the existing values for last_import.
+  $last_import_values = $database->select($table_name)
+    ->fields($table_name, [$id_key, 'last_import'])
+    ->execute()
+    ->fetchAllKeyed();
+
+  // Clear out the values.
+  $database->update($table_name)
+    ->fields([
+      'last_export' => NULL,
+      'last_import' => NULL,
+    ])
+    ->execute();
+
+  // Uninstall the old fields.
+  $field_storage_definition_last_export = $definition_manager->getFieldStorageDefinition('last_export', $bundle_of);
+  $definition_manager->uninstallFieldStorageDefinition($field_storage_definition_last_export);
+  $field_storage_definition_last_import = $definition_manager->getFieldStorageDefinition('last_import', $bundle_of);
+  $definition_manager->uninstallFieldStorageDefinition($field_storage_definition_last_import);
+
+  // Prepare new fields.
+  $new_last_export = BaseFieldDefinition::create('timestamp')
+    ->setLabel(t('Last exported'))
+    ->setDescription(t('The last time the entity got exported.'))
+    ->setRequired(FALSE);
+
+  $new_last_import = BaseFieldDefinition::create('timestamp')
+    ->setLabel(t('Last import'))
+    ->setDescription(t('The last time the entity got imported.'))
+    ->setRequired(FALSE);
+
+  // Create new fields.
+  $definition_manager->installFieldStorageDefinition('last_export', $bundle_of, $bundle_of, $new_last_export);
+  $definition_manager->installFieldStorageDefinition('last_import', $bundle_of, $bundle_of, $new_last_import);
+
+  // Restore the values.
+  foreach ($last_export_values as $id => $value) {
+    $database->update($table_name)
+      ->fields(['last_export' => $value])
+      ->condition($id_key, $id)
+      ->execute();
+  }
+  foreach ($last_import_values as $id => $value) {
+    $database->update($table_name)
+      ->fields(['last_import' => $value])
+      ->condition($id_key, $id)
+      ->execute();
+  }
+}

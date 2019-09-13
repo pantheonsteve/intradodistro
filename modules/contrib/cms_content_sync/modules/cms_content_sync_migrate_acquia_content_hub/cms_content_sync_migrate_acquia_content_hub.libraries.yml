@@ -1,0 +1,4 @@
+migrate-form:
+  version: 1.x
+  js:
+    js/migrate-form.js: {}

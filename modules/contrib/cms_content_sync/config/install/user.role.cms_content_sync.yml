@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - cms_content_sync
+  enforced:
+    module:
+      - cms_content_sync
+id: cms_content_sync
+label: 'CMS Content Sync'
+weight: 2
+is_admin: false
+permissions:
+  - 'restful get cms_content_sync_preview_resource'
+  - 'restful get cms_content_sync_entity_resource'
+  - 'restful post cms_content_sync_entity_resource'
+  - 'restful patch cms_content_sync_entity_resource'
+  - 'restful delete cms_content_sync_entity_resource'

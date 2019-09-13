@@ -1,0 +1,6 @@
+entity.webhook_config.collection:
+  title: 'Webhooks'
+  route_name: entity.webhook_config.collection
+  description: 'Administer outgoing webhooks.'
+  parent: system.admin_config_services
+  weight: 99

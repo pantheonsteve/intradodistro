@@ -1,0 +1,13 @@
+name: Real AES
+description: "Provides an Authenticated AES encryption method for Encrypt though the Defuse PHP Encryption library."
+# core: 8.x
+type: module
+package: Security
+dependencies:
+  - encrypt:encrypt
+
+# Information added by Drupal.org packaging script on 2019-03-13
+version: '8.x-2.2'
+core: '8.x'
+project: 'real_aes'
+datestamp: 1552499642

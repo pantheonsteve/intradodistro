@@ -1,0 +1,5 @@
+cms_content_sync_migrate_acquia_content_hub.migrate_export:
+  title: 'Migrate Acquia Content Hub (Export)'
+  route_name: cms_content_sync_migrate_acquia_content_hub.migrate_export
+  base_route: entity.cms_content_sync.introduction
+  weight: 100

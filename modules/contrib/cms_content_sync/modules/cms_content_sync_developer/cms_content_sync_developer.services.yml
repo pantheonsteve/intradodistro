@@ -1,0 +1,11 @@
+services:
+  cms_content_sync_developer.config_subscriber:
+    class: Drupal\cms_content_sync_developer\EventSubscriber\VersionComparison
+    arguments: ['@config.factory']
+    tags:
+      - { name: event_subscriber }
+  cms_content_sync_developer.event_subscriber:
+    class: Drupal\cms_content_sync_developer\EventSubscriber\VersionWarning
+    arguments: ['@config.factory', '@current_user', '@messenger']
+    tags:
+      - {name: event_subscriber}

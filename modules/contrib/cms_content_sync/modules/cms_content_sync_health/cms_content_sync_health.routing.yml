@@ -1,0 +1,23 @@
+entity.cms_content_sync.sync_health:
+  path: '/admin/content/sync-health'
+  defaults:
+    _controller: '\Drupal\cms_content_sync_health\Controller\SyncHealth::overview'
+    _title: 'Sync Health'
+  requirements:
+    _permission: 'access sync health'
+
+entity.cms_content_sync.sync_health.export:
+  path: '/admin/content/sync-health/export'
+  defaults:
+    _controller: '\Drupal\cms_content_sync_health\Controller\SyncHealth::export'
+    _title: 'Sync Health - Export'
+  requirements:
+    _permission: 'access sync health'
+
+entity.cms_content_sync.sync_health.import:
+  path: '/admin/content/sync-health/import'
+  defaults:
+    _controller: '\Drupal\cms_content_sync_health\Controller\SyncHealth::import'
+    _title: 'Sync Health - Import'
+  requirements:
+    _permission: 'access sync health'

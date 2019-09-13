@@ -1,0 +1,1777 @@
+<?php
+
+/**
+ * @file
+ * Module file for cms_content_sync.
+ *
+ * @author Edge Box GmbH
+ */
+
+use Drupal\cms_content_sync\Controller\PushChanges;
+use Drupal\cms_content_sync\Plugin\Type\EntityHandlerPluginManager;
+use Drupal\cms_content_sync\SyncCoreFlowExport;
+use Drupal\Component\Serialization\Json;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\cms_content_sync\ExportIntent;
+use Drupal\cms_content_sync\ImportIntent;
+use Drupal\cms_content_sync\Plugin\cms_content_sync\field_handler\DefaultEntityReferenceHandler;
+use Drupal\cms_content_sync\SyncIntent;
+use Drupal\Core\Render\Markup;
+use Drupal\encrypt\Entity\EncryptionProfile;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\cms_content_sync\Entity\Flow;
+use Drupal\Core\Url;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Entity\ContentEntityDeleteForm;
+use Drupal\cms_content_sync\Entity\EntityStatus;
+use Drupal\cms_content_sync\Entity\Pool;
+use Drupal\menu_link_content\Plugin\Menu\MenuLinkContent;
+use Drupal\node\Form\DeleteMultiple;
+use Drupal\paragraphs\Entity\Paragraph;
+
+/**
+ * @var int CMS_CONTENT_SYNC_USER_ID The user to perform updates with.
+ */
+define('CMS_CONTENT_SYNC_USER_ID', \Drupal::service('keyvalue.database')->get('cms_content_sync_user')->get('uid'));
+/**
+ * @var string cms_content_sync_PROFILE_NAME The encryption profile name.
+ */
+define('cms_content_sync_PROFILE_NAME', 'cms_content_sync');
+
+/**
+ * Check whether the module has been installed properly. If the another module
+ * creates entities *during* the installation of this module for example,
+ * the installation will throw a fatal error and the user can't continue
+ * using this module. This can happen when you're using an audit module that
+ * logs all site interactions for example.
+ *
+ * @returns bool
+ */
+function _cms_content_sync_is_installed() {
+  static $installed = FALSE;
+  if ($installed) {
+    return TRUE;
+  }
+
+  try {
+    \Drupal::entityTypeManager()->getStorage('cms_content_sync_flow');
+    \Drupal::entityTypeManager()->getStorage('cms_content_sync_pool');
+    \Drupal::entityTypeManager()->getStorage('cms_content_sync_entity_status');
+    return $installed = TRUE;
+  }
+  catch (\Exception $e) {
+    return FALSE;
+  }
+}
+
+/**
+ * Add a submit handler to the form in case paragraphs are embedded within it.
+ *
+ * @param $form
+ * @param $element
+ *
+ * @return bool
+ */
+function _cms_content_sync_add_embedded_entity_submit_handler(&$form, &$element) {
+  if (!empty($element['cms_content_sync_edit_override']) && $element !== $form) {
+    // Submit button is not available yet, so we temporarily store the handler
+    // in the form array and set it later when the buttons are available.
+    $form['actions']['submit']['#submit'][] = '_cms_content_sync_override_embedded_entity_submit';
+    return TRUE;
+  }
+
+  foreach ($element as &$item) {
+    if (!is_array($item)) {
+      continue;
+    }
+    if (_cms_content_sync_add_embedded_entity_submit_handler($form, $item)) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Get HTML for a list of entity type differences.
+ *
+ * @param string $entity_type
+ * @param string $bundle
+ *
+ * @return string
+ *
+ * @throws \Exception
+ */
+function _cms_content_sync_display_entity_type_differences($entity_type, $bundle) {
+  $all_diffs = Pool::getAllSitesWithDifferentEntityTypeVersion($entity_type, $bundle);
+
+  $result = '';
+  foreach ($all_diffs as $pool => $pool_diff) {
+    if (empty($pool_diff)) {
+      continue;
+    }
+
+    foreach ($pool_diff as $site_id => $diff) {
+      $result .= '<li>' . $site_id . ' (' . $pool . ')<ul>';
+
+      if (isset($diff['local_missing'])) {
+        foreach ($diff['local_missing'] as $field) {
+          $result .= '<li>' . t('Missing locally:') . ' ' . $field . '</li>';
+        }
+      }
+      if (isset($diff['remote_missing'])) {
+        foreach ($diff['remote_missing'] as $field) {
+          $result .= '<li>' . t('Missing remotely:') . ' ' . $field . '</li>';
+        }
+      }
+
+      $result .= '</ul></li>';
+    }
+  }
+
+  if (empty($result)) {
+    return NULL;
+  }
+
+  return '<ul>' . $result . '</ul>';
+}
+
+/**
+ * @return array
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _cms_content_sync_display_all_entity_type_differences() {
+  $result = [];
+
+  $entity_types = \Drupal::service('entity_type.bundle.info')->getAllBundleInfo();
+  ksort($entity_types);
+  foreach ($entity_types as $type_key => $entity_type) {
+    if (substr($type_key, 0, 16) == 'cms_content_sync') {
+      continue;
+    }
+
+    ksort($entity_type);
+
+    foreach ($entity_type as $entity_bundle_name => $entity_bundle) {
+      $any_handler = FALSE;
+      foreach (Flow::getAll() as $id => $flow) {
+        $config = $flow->getEntityTypeConfig($type_key, $entity_bundle_name, TRUE);
+        if (empty($config) || $config['handler'] == Flow::HANDLER_IGNORE) {
+          continue;
+        }
+        $any_handler = TRUE;
+        break;
+      }
+
+      if (!$any_handler) {
+        continue;
+      }
+
+      _cms_content_sync_display_entity_type_differences_recursively($result, $type_key, $entity_bundle_name);
+    }
+  }
+
+  return $result;
+}
+
+/**
+ * Get HTML for a list of entity type differences and include all referenced
+ * entity types.
+ *
+ * @param array $result
+ *   A storage to save information per entity type + bundle
+ *   in.
+ * @param string $entity_type
+ * @param string $bundle
+ *
+ * @throws \Exception
+ */
+function _cms_content_sync_display_entity_type_differences_recursively(&$result, $entity_type, $bundle) {
+  if (isset($result[$entity_type][$bundle])) {
+    return;
+  }
+
+  if (!EntityHandlerPluginManager::isEntityTypeFieldable($entity_type)) {
+    return;
+  }
+
+  $self = _cms_content_sync_display_entity_type_differences($entity_type, $bundle);
+  $result[$entity_type][$bundle] = empty($self) ? '' : $self;
+
+  /**
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundleInfoService
+   */
+  $bundleInfoService = \Drupal::service('entity_type.bundle.info');
+
+  /**
+   * @var \Drupal\Core\Entity\EntityFieldManager $entityFieldManager
+   */
+  $entityFieldManager = \Drupal::service('entity_field.manager');
+
+  /**
+   * @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields
+   */
+  $fields = $entityFieldManager->getFieldDefinitions($entity_type, $bundle);
+
+  foreach ($fields as $key => $field) {
+    if (!in_array($field->getType(), ["entity_reference", "entity_reference_revisions"])) {
+      continue;
+    }
+
+    $any_handler = FALSE;
+    foreach (Flow::getAll() as $id => $flow) {
+      $config = $flow->getFieldHandlerConfig($entity_type, $bundle, $key);
+      if (empty($config) || $config['handler'] == Flow::HANDLER_IGNORE) {
+        continue;
+      }
+      $any_handler = TRUE;
+      break;
+    }
+
+    if (!$any_handler) {
+      continue;
+    }
+
+    $type = $field->getSetting('target_type');
+
+    $bundles = $field->getSetting('target_bundles');
+    if (empty($bundles)) {
+      $bundles = array_keys($bundleInfoService->getBundleInfo($type));
+    }
+
+    foreach ($bundles as $name) {
+      $config = $flow->getEntityTypeConfig($type, $name, TRUE);
+      if (empty($config)) {
+        continue;
+      }
+
+      _cms_content_sync_display_entity_type_differences_recursively($result, $type, $name);
+    }
+  }
+}
+
+/**
+ * Get HTML for a list of the usage for the given entity.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *
+ * @return string
+ *
+ * @throws \Exception
+ */
+function _cms_content_sync_display_pool_usage($entity) {
+  $usages = Pool::getAllExternalUsages($entity);
+  $result = '';
+  foreach ($usages as $pool => $usage) {
+    if (empty($usage)) {
+      continue;
+    }
+    $result .= '<br><b>Pool: ' . Pool::getAll()[$pool]->label . '</b><ul>';
+    foreach ($usage as $site_id => $url) {
+      if ($url) {
+        $text = '<a href="' . $url . '">' . $site_id . '</a>';
+      }
+      else {
+        $text = $site_id;
+      }
+      $result .= '<li>' . $text . '</li>';
+    }
+    $result .= '</ul>';
+  }
+
+  if (empty($result)) {
+    return $result;
+  }
+
+  return '</ul>' . $result . '</ul>';
+}
+
+/**
+ * Temp. save static values for taxonomy tree changes.
+ *
+ * @param null|bool $set
+ *
+ * @return bool|array
+ */
+function _cms_content_sync_update_taxonomy_tree_static($set = NULL, $entity = NULL) {
+  static $value = FALSE;
+  static $entities = [];
+
+  if ($set !== NULL) {
+    $value = $set;
+  }
+
+  if ($entity !== NULL) {
+    $entities[] = $entity;
+  }
+
+  if ($set === FALSE) {
+    return $entities;
+  }
+
+  return $value;
+}
+
+/**
+ * React on changes within taxonomy trees.
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
+function cms_content_sync_update_taxonomy_tree_validate($form, FormStateInterface $form_state) {
+  _cms_content_sync_update_taxonomy_tree_static(TRUE);
+}
+
+/**
+ * React on changes within taxonomy trees.
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
+function cms_content_sync_update_taxonomy_tree_submit($form, FormStateInterface $form_state) {
+  $entities = _cms_content_sync_update_taxonomy_tree_static(FALSE);
+
+  foreach ($entities as $entity) {
+    ExportIntent::exportEntityFromUi($entity, ExportIntent::EXPORT_AUTOMATICALLY, SyncIntent::ACTION_UPDATE);
+  }
+}
+
+/**
+ * 1) Make sure the user is informed that content will not only be deleted on
+ * this * instance but also on all connected instances if configured that way.
+ *
+ * 2) Make sure Sync Core knows about password changes at the
+ * CMS Content Sync user and can still authenticate to perform updates.
+ *
+ * 3) Disabled node forms if the content has been imported and the
+ * synchronization is configured to disable imported content.
+ *
+ * @param array $form
+ *   The form definition.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ * @param string $form_id
+ *   he ID of the form.
+ *
+ * @see _cms_content_sync_form_alter_disabled_fields
+ *
+ * @throws \Exception
+ */
+function cms_content_sync_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  if (!_cms_content_sync_is_installed()) {
+    return;
+  }
+
+  if ($form_id == 'taxonomy_overview_terms') {
+    $form['#validate'][] = 'cms_content_sync_update_taxonomy_tree_validate';
+    $form['#submit'][] = 'cms_content_sync_update_taxonomy_tree_submit';
+  }
+
+  $form_object = $form_state->getFormObject();
+
+  // Avoid function nesting error for conditional fields.
+  // @ToDo: Find a way to limitate this function call in a useful way.
+  if ($form_id != 'conditional_field_edit_form') {
+    _cms_content_sync_add_embedded_entity_submit_handler($form, $form);
+  }
+
+  switch ($form_id) {
+    case 'user_form':
+      $form['actions']['submit']['#submit'][] = 'cms_content_sync_user_password_submit';
+      break;
+  }
+
+  if ($form_object instanceof DeleteMultiple || $form_object instanceof ContentEntityDeleteForm) {
+    if (!empty($form_state->getUserInput()['confirm'])) {
+      return;
+    }
+    if ($form_object instanceof DeleteMultiple) {
+      $temp_store_factory = \Drupal::service('tempstore.private');
+      $entity_type_manager = \Drupal::service('entity_type.manager');
+      $tempstore = $temp_store_factory->get('entity_delete_multiple_confirm');
+      $user = \Drupal::currentUser();
+
+      // ToDo: Extend this that it is also working with other entity types.
+      $entity_type_id = 'node';
+      $selection = $tempstore->get($user->id() . ':' . $entity_type_id);
+      $entities = $entity_type_manager->getStorage($entity_type_id)->loadMultiple(array_keys($selection));
+    }
+    else {
+      $entities[] = $form_object->getEntity();
+    }
+
+    foreach ($entities as $entity) {
+
+      if (!Flow::isLocalDeletionAllowed($entity)) {
+        $messenger = \Drupal::messenger();
+        $messenger->addWarning(
+          t(
+            '%label cannot be deleted as it has been imported.',
+            ['%label' => $entity->label()]
+          )
+        );
+        // ['actions']['submit'].
+        $form['#disabled'] = TRUE;
+      }
+      else {
+        $flows = Flow::getExportFlows($entity, SyncIntent::ACTION_DELETE);
+
+        if (count($flows)) {
+          $messenger = \Drupal::messenger();
+          $usage = _cms_content_sync_display_pool_usage($entity);
+          $message = $usage ? t(
+            'This will delete %label from all sites using it: @sites',
+            ['%label' => $entity->label(), '@sites' => Markup::create($usage)]
+          ) : t(
+            'This will delete %label from all sites using it.',
+            ['%label' => $entity->label()]
+          );
+          $messenger->addWarning($message);
+        }
+      }
+
+    }
+  }
+
+  // Add pool selection functionality to entity types.
+  elseif ($form_object instanceof ContentEntityForm) {
+    $form['#attached']['library'][] = 'cms_content_sync/entity-form';
+
+    $entity = $form_object
+      ->getEntity();
+
+    _cms_content_sync_form_alter_disabled_fields($form, $form_state, $entity);
+
+    $bundle = $entity->bundle();
+    $selectable_exportable_flows = Pool::getSelectablePools($entity->getEntityTypeId(), $bundle);
+
+    // If the entity has been imported, there's no reason to select an export pool.
+    $infos = EntityStatus::getInfosForEntity($entity->getEntityTypeId(), $entity->uuid());
+    foreach ($infos as $info) {
+      if ($info->getLastImport()) {
+        return;
+      }
+    }
+
+    $flows = Flow::getAll();
+    if (!empty($selectable_exportable_flows)) {
+      _cms_content_sync_add_export_pool_form($form, $selectable_exportable_flows, $entity);
+      _cms_content_sync_add_export_usage_form($form);
+    }
+    else {
+      $flows = Flow::getExportFlows($entity, SyncIntent::ACTION_DELETE);
+      if (count($flows)) {
+        _cms_content_sync_add_export_usage_form($form);
+      }
+      else {
+        $flows = Flow::getExportFlows($entity, SyncIntent::ACTION_UPDATE);
+        if (count($flows)) {
+          _cms_content_sync_add_export_usage_form($form);
+        }
+      }
+    }
+
+    foreach ($flows as $flow) {
+      if ($flow->supportsEntity($entity)) {
+        _cms_content_sync_add_export_version_mismatches_form($form, $form_state);
+        _cms_content_sync_add_form_value_cache($form, $form_state);
+        break;
+      }
+    }
+
+    $user = \Drupal::currentUser();
+    if ($user->hasPermission('publish cms content sync changes')) {
+      foreach (Flow::getAll() as $flow_id => $flow) {
+        // Add "Save and export" button to entity types which are configured to
+        // be exported manually.
+        // @Todo: Show message when an entity is not exported due to: Not published or no pool selected.
+        if ($flow->canExportEntity($entity, ExportIntent::EXPORT_MANUALLY)) {
+          _cms_content_sync_add_save_export_action($form, $form_state, $flow_id, $entity);
+          break;
+        }
+
+        // Adjust save button label if the entity will be exported
+        // automatically after saving it.
+        if ($flow->canExportEntity($entity, ExportIntent::EXPORT_AUTOMATICALLY)) {
+          $form['actions']['submit']['#value'] = t('Save and export');
+          break;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Add "Save and export" action.
+ *
+ * @param $form
+ * @param $form_state
+ * @param $flow_id
+ * @param $entity
+ */
+function _cms_content_sync_add_save_export_action(&$form, $form_state, $flow_id, $entity) {
+  $form_state->setFormState([
+    'flow_id' => $flow_id,
+  ]);
+
+  $form['actions']['save_export'] = $form['actions']['submit'];
+  $form['actions']['save_export']['#value'] = t('Save and export');
+  array_push($form['actions']['save_export']['#submit'], '_cms_content_sync_add_save_export_action_submit');
+}
+
+/**
+ * Save and export submit handler.
+ *
+ * @param $form
+ * @param $form_state
+ */
+function _cms_content_sync_add_save_export_action_submit($form, $form_state) {
+  $entity = $form_state->getformObject()->getEntity();
+  PushChanges::pushChanges($form_state->get('flow_id'), $entity, $entity->getEntityTypeId());
+}
+
+/**
+ * Add additional entity status fields to paragraph items.
+ */
+function cms_content_sync_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  if (!_cms_content_sync_is_installed()) {
+    return;
+  }
+
+  $field_types = $context['widget']->getPluginDefinition()['field_types'];
+  if (isset($field_types)) {
+    if (in_array('entity_reference_revisions', $field_types)) {
+      _cms_content_sync_paragraphs_export_settings_form($element, $form_state, $context);
+    }
+  }
+}
+
+/**
+ * Add the Export settings for to the several Paragraph widget types.
+ */
+function _cms_content_sync_paragraphs_export_settings_form(&$element, FormStateInterface &$form_state, &$context) {
+  // The parent entity of the paragraph.
+  $parent = $context['items']->getParent()->getValue();
+
+  // This code is based on:
+  // https://www.drupal.org/project/paragraphs/issues/2868155#comment-12610258
+  $entity_type = 'paragraph';
+  if (isset($element['#paragraph_type'])) {
+    $bundle = $element['#paragraph_type'];
+    $delta = $context['delta'];
+    if (!empty($context['items'])) {
+      if (isset($context['items']->get($delta)->target_id)) {
+        $entity = Paragraph::load($context['items']->get($delta)->target_id);
+      }
+    }
+
+    if (!empty($entity)) {
+      _cms_content_sync_form_alter_disabled_fields($element, $form_state, $entity);
+    }
+
+    // If no bundle is given, the previous mentioned commit is
+    // not added to the project.
+    if (!is_null($bundle)) {
+      // If the parent entity isn't exported, there's no need to handle these
+      // paragraphs at all.
+      $export_any = (bool) count(ExportIntent::getFlowsForEntity($parent, ExportIntent::EXPORT_ANY));
+      if (!$export_any && !EntityStatus::getLastExportForEntity($parent)) {
+        return;
+      }
+
+      $selectable_exportable_flows = Pool::getSelectablePools($entity_type, $bundle, $parent, $context['items']->getName());
+
+      if (!empty($selectable_exportable_flows)) {
+        if (isset($entity)) {
+          _cms_content_sync_add_export_pool_form($element['subform'], $selectable_exportable_flows, $entity);
+        }
+        else {
+          _cms_content_sync_add_export_pool_form($element['subform'], $selectable_exportable_flows, NULL, $parent);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Display the export group either to select pools or to display the usage on
+ * other sites.
+ * You can use $form['cms_content_sync_export_group'] afterwards to access it.
+ *
+ * @param array $form
+ *   The form array.
+ */
+function _cms_content_sync_add_export_form_group(&$form) {
+  if (isset($form['cms_content_sync_export_group'])) {
+    return;
+  }
+
+  // Try to show the group right above the status checkbox if it exists.
+  if (isset($form['status'])) {
+    $weight = $form['status']['#weight'] - 1;
+  }
+  else {
+    $weight = 99;
+  }
+
+  $form['cms_content_sync_export_group'] = [
+    '#type' => 'details',
+    '#open' => FALSE,
+    '#title' => t('Export settings'),
+    '#weight' => $weight,
+  ];
+
+  // If we got a advanced group we use it.
+  if (isset($form['advanced'])) {
+    $form['cms_content_sync_export_group']['#type'] = 'details';
+    $form['cms_content_sync_export_group']['#group'] = 'advanced';
+  }
+}
+
+/**
+ * Cache all form values on submission.
+ * This is required for sub modules like the sitemap to get values statically
+ * from cache per entity type.
+ *
+ * @param $form
+ * @param $form_state
+ */
+function _cms_content_sync_add_form_value_cache(&$form, $form_state) {
+  // Entity form submit handler.
+  if (isset($form['actions']['submit'])) {
+    if (!empty($form['actions']['submit']['#submit'])) {
+      array_unshift($form['actions']['submit']['#submit'], '_cms_content_sync_cache_submit_values');
+    }
+    else {
+      $form['actions']['submit']['#submit'][] = '_cms_content_sync_cache_submit_values';
+    }
+  }
+}
+
+/**
+ * @param string $entity_type
+ * @param string $entity_uuid
+ * @param array $values
+ *
+ * @return array
+ */
+function _cms_content_sync_submit_cache($entity_type, $entity_uuid, $values = NULL) {
+  static $cache = [];
+
+  if (!empty($values)) {
+    $cache[$entity_type][$entity_uuid] = $values;
+  }
+
+  if (empty($cache[$entity_type][$entity_uuid])) {
+    return NULL;
+  }
+
+  return $cache[$entity_type][$entity_uuid];
+}
+
+/**
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
+function _cms_content_sync_cache_submit_values($form, $form_state) {
+  /**
+   * @var \Drupal\Core\Entity\EntityInterface $entity
+   */
+  $entity = $form_state->getFormObject()->getEntity();
+
+  _cms_content_sync_submit_cache(
+    $entity->getEntityTypeId(),
+    $entity->uuid(),
+    $form_state->getValues()
+  );
+}
+
+/**
+ * Add a button "Show version mismatches" to show all sites using a different
+ * entity type version.
+ *
+ * @param array $form
+ */
+function _cms_content_sync_add_export_version_mismatches_form(&$form, $form_state) {
+  _cms_content_sync_add_export_form_group($form);
+
+  // Only add the button for users having the permission
+  // "show entity type differences".
+  $user = \Drupal::currentUser();
+  if ($user->hasPermission('show entity type differences')) {
+    /**
+     * @var \Drupal\Core\Entity\EntityInterface $entity
+     */
+    $entity = $form_state->getFormObject()->getEntity();
+
+    $form['cms_content_sync_export_group']['cms_content_sync_version_mismatches'] = [
+      '#type' => 'button',
+      '#prefix' => '<span id="cms-content-sync-version-mismatches">',
+      '#suffix' => '</span>',
+      '#value' => t('Show version mismatches'),
+      '#entity_type' => $entity->getEntityTypeId(),
+      '#bundle' => $entity->bundle(),
+      '#recursive' => TRUE,
+      '#ajax' => [
+        'callback' => '_cms_content_sync_display_version_mismatches',
+        'wrapper' => 'cms-content-sync-version-mismatches',
+        'effect' => 'fade',
+      ],
+    ];
+  }
+}
+
+/**
+ * @param $mismatches
+ * @return string
+ */
+function _cms_content_sync_display_entity_type_differences_recursively_render($mismatches) {
+  $result = '';
+  foreach ($mismatches as $entity_type => $bundles) {
+    $title_set = FALSE;
+    foreach ($bundles as $bundle => $html) {
+      if (empty($html)) {
+        continue;
+      }
+      if (!$title_set) {
+        $result .= '<li>' . $entity_type . '<ul>';
+        $title_set = TRUE;
+      }
+      $result .= '<li>' . $bundle . ' ' . print_r($html, 1) . '</li>';
+    }
+    if ($title_set) {
+      $result .= '</ul></li>';
+    }
+  }
+
+  return $result;
+}
+
+/**
+ * Replace the "Show version mismatches" button with the actual information.
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *
+ * @return array
+ *
+ * @throws \Exception
+ */
+function _cms_content_sync_display_version_mismatches($form, &$form_state) {
+  $trigger = $form_state->getTriggeringElement();
+
+  if ($trigger['#recursive']) {
+    $mismatches = [];
+    _cms_content_sync_display_entity_type_differences_recursively($mismatches, $trigger['#entity_type'], $trigger['#bundle']);
+
+    $result = _cms_content_sync_display_entity_type_differences_recursively_render($mismatches);
+  }
+  else {
+    $result = _cms_content_sync_display_entity_type_differences($trigger['#entity_type'], $trigger['#bundle']);
+  }
+
+  if (empty($result)) {
+    $result = '<div class="messages messages--status">' . t('No differences.') . '</div>';
+  }
+
+  return [
+    '#type' => 'fieldset',
+    '#title' => t('Version mismatches'),
+    '#markup' => $result,
+  ];
+}
+
+/**
+ * Add a button "Show usage" to show all sites using this content.
+ *
+ * @param array $form
+ */
+function _cms_content_sync_add_export_usage_form(&$form) {
+  _cms_content_sync_add_export_form_group($form);
+
+  $form['cms_content_sync_export_group']['cms_content_sync_usage'] = [
+    '#type' => 'button',
+    '#prefix' => '<span id="cms-content-sync-export-usage">',
+    '#suffix' => '</span>',
+    '#value' => t('Show usage'),
+    '#ajax' => [
+      'callback' => '_cms_content_sync_display_export_usage',
+      'wrapper' => 'cms-content-sync-export-usage',
+      'effect' => 'fade',
+    ],
+  ];
+}
+
+/**
+ * Replace the "Show usage" button with the actual usage information.
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *
+ * @return array
+ *
+ * @throws \Exception
+ */
+function _cms_content_sync_display_export_usage($form, &$form_state) {
+  $entity = $form_state->getFormObject()->getEntity();
+
+  $result = _cms_content_sync_display_pool_usage($entity);
+  if (!$result) {
+    $result = '<div class="messages messages--status">' . t('No usage yet.') . '</div>';
+  }
+
+  return [
+    '#type' => 'fieldset',
+    '#title' => t('Usage'),
+    '#markup' => $result,
+  ];
+}
+
+/**
+ * Add the export widgets to the form, providing flow and pool selection.
+ */
+function _cms_content_sync_add_export_pool_form(&$form, $selectable_exportable_flows, $entity = NULL, $parentEntity = NULL) {
+  _cms_content_sync_add_export_form_group($form);
+
+  $selected_flow = NULL;
+
+  // Flow selection.
+  if (count($selectable_exportable_flows) === 1) {
+    $id = array_keys($selectable_exportable_flows)[0];
+    $form['cms_content_sync_export_group']['cms_content_sync_flow'] = [
+      '#title' => t('Export flow selection'),
+      '#type' => 'hidden',
+      '#value' => $id,
+    ];
+    $selected_flow = Flow::getAll()[$id];
+  }
+  else {
+    $flow_options = [];
+    foreach ($selectable_exportable_flows as $flow_id => $selectable_exportable_flow) {
+      if (!$selected_flow) {
+        $selected_flow = Flow::getAll()[$flow_id];
+      }
+      $flow_options[$flow_id] = $selectable_exportable_flow['flow_label'];
+    }
+
+    $form['cms_content_sync_export_group']['cms_content_sync_flow'] = [
+      '#title' => t('Export flow selection'),
+      '#type' => 'select',
+      '#default_value' => $selected_flow->id,
+      '#options' => $flow_options,
+      '#ajax' => [
+        'callback' => '_cms_content_sync_update_pool_selector',
+        'event' => 'change',
+        'wrapper' => 'ajax-pool-selector-wrapper',
+      ],
+    ];
+  }
+
+  // Pool selection.
+  $options = $selectable_exportable_flows[$selected_flow->id];
+
+  // Get configured widget type for the current active flow.
+  if ($options['widget_type'] == 'single_select' || $options['widget_type'] == 'multi_select') {
+    $widget_type = 'select';
+  }
+  else {
+    $widget_type = $options['widget_type'];
+  }
+
+  $exported_pools = [];
+  $selected_pools = [];
+  if ($entity) {
+    foreach ($selected_flow->getUsedExportPools($entity, ExportIntent::EXPORT_ANY, SyncIntent::ACTION_CREATE, FALSE) as $pool) {
+      $exported_pools[] = $pool->id;
+    }
+    $selected_pools = $exported_pools;
+  }
+  elseif ($parentEntity) {
+    foreach ($selected_flow->getUsedExportPools($parentEntity, ExportIntent::EXPORT_ANY, SyncIntent::ACTION_UPDATE, FALSE) as $pool) {
+      if (!isset($options['pools'][$pool->id])) {
+        continue;
+      }
+      $selected_pools[] = $pool->id;
+    }
+  }
+
+  $single = $options['widget_type'] == 'single_select' || $options['widget_type'] == 'radios';
+  $pool_list = [];
+  if ($single) {
+    $pool_list['ignore'] = t('None');
+    $default_value = empty($selected_pools) ? 'ignore' : $selected_pools[0];
+  }
+  else {
+    $default_value = $selected_pools;
+  }
+  $pool_list = array_merge($pool_list, $options['pools']);
+
+  $form['cms_content_sync_export_group']['cms_content_sync_pool'] = [
+    '#title' => t('Export pool'),
+    '#prefix' => '<div id="ajax-pool-selector-wrapper">',
+    '#suffix' => '</div>',
+    '#type' => $widget_type,
+    '#default_value' => $default_value,
+    '#options' => $pool_list,
+    '#disabled' => !empty($exported_pools),
+  ];
+  if ($entity) {
+    $form['cms_content_sync_export_group']['cms_content_sync_uuid'] = [
+      '#type' => 'hidden',
+      '#value' => $entity->uuid(),
+    ];
+  }
+
+  if ($options['widget_type'] == 'multi_select') {
+    $form['cms_content_sync_export_group']['cms_content_sync_pool']['#multiple'] = TRUE;
+  }
+
+  // Entity form submit handler.
+  if (isset($form['actions']['submit'])) {
+    if (!empty($form['actions']['submit']['#submit'])) {
+      array_unshift($form['actions']['submit']['#submit'], '_cms_content_sync_set_entity_export');
+    }
+    else {
+      $form['actions']['submit']['#submit'][] = '_cms_content_sync_set_entity_export';
+    }
+  }
+}
+
+/**
+ * Entity status update.
+ *
+ * Update the EntityStatus for the given entity, setting
+ * the EntityStatus::FLAG_EDIT_OVERRIDE flag accordingly.
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
+function _cms_content_sync_set_entity_export(array $form, FormStateInterface $form_state) {
+  $flow_id = $form_state->getValue('cms_content_sync_flow');
+  if (!$flow_id) {
+    return;
+  }
+
+  $values = $form_state->getValue('cms_content_sync_pool');
+
+  $processed = [];
+  if (is_array($values)) {
+    foreach ($values as $id => $selected) {
+      if ($selected && $id !== 'ignore') {
+        $processed[] = $id;
+      }
+    }
+  }
+  else {
+    if ($values !== 'ignore') {
+      $processed[] = $values;
+    }
+  }
+
+  /**
+   * @var \Drupal\Core\Entity\EntityInterface $entity
+   */
+  $entity = $form_state
+    ->getFormObject()
+    ->getEntity();
+
+  EntityStatus::saveSelectedExportPoolInfo($entity, $flow_id, $processed);
+
+  if ($entity instanceof FieldableEntityInterface) {
+    $entityFieldManager = \Drupal::service('entity_field.manager');
+    /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
+    $fields = $entityFieldManager->getFieldDefinitions($entity->getEntityTypeId(), $entity->bundle());
+
+    _cms_content_sync_set_entity_export_subform($entity, $form, $form_state, $fields);
+  }
+}
+
+/**
+ * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param \Drupal\Core\Field\FieldDefinitionInterface[] $fields
+ * @param array $tree_position
+ */
+function _cms_content_sync_set_entity_export_subform(FieldableEntityInterface $entity, array $form, FormStateInterface $form_state, array $fields, $tree_position = []) {
+  $entityFieldManager = \Drupal::service('entity_field.manager');
+
+  foreach ($fields as $name => $definition) {
+    if ($definition->getType() == 'entity_reference_revisions') {
+      $subform = &$form[$name]['widget'];
+      $count   = $subform['#max_delta'];
+      for ($i = 0; $i <= $count; $i++) {
+        $refflow   = $form_state->getValue(array_merge($tree_position, [$name, $i, 'subform', 'cms_content_sync_export_group', 'cms_content_sync_flow']));
+        $refvalues = $form_state->getValue(array_merge($tree_position, [$name, $i, 'subform', 'cms_content_sync_export_group', 'cms_content_sync_pool']));
+        $refuuid   = $form_state->getValue(array_merge($tree_position, [$name, $i, 'subform', 'cms_content_sync_export_group', 'cms_content_sync_uuid']));
+        if (!empty($refflow) && !empty($refvalues)) {
+          EntityStatus::accessTemporaryExportPoolInfoForField($entity->getEntityTypeId(), $entity->uuid(), $name, $i, $tree_position, $refflow, $refvalues, $refuuid);
+        }
+        if (!empty($subform[$i]['subform'])) {
+          $entity_type = $definition->getSetting('target_type');
+          $bundle = $subform[$i]['#paragraph_type'];
+          /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
+          $fields = $entityFieldManager->getFieldDefinitions($entity_type, $bundle);
+
+          _cms_content_sync_set_entity_export_subform($entity, $subform[$i]['subform'], $form_state, $fields, array_merge($tree_position, [$name, $i, 'subform']));
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Ajax callback to render the pools after flow selection.
+ */
+function _cms_content_sync_update_pool_selector(array $form, FormStateInterface $form_state) {
+  $form_object = $form_state->getFormObject();
+  /**
+   * @var \Drupal\Core\Entity\EntityInterface $entity
+   */
+  $entity = $form_object->getEntity();
+  $bundle = $entity->bundle();
+  $selectable_exportable_flows = Pool::getSelectablePools($entity->getEntityTypeId(), $bundle);
+
+  $options = $selectable_exportable_flows[$form_state->getValue('cms_content_sync_flow')]['pools'];
+  $form['cms_content_sync_export_group']['cms_content_sync_pool']['#options'] = $options;
+
+  return $form['cms_content_sync_export_group']['cms_content_sync_pool'];
+}
+
+/**
+ * Export the entity automatically if configured to do so.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function cms_content_sync_entity_insert(EntityInterface $entity) {
+  if (!_cms_content_sync_is_installed()) {
+    return;
+  }
+
+  if ($entity instanceof FieldableEntityInterface) {
+    DefaultEntityReferenceHandler::saveEmbeddedExportPools($entity);
+  }
+
+  ExportIntent::exportEntityFromUi($entity, ExportIntent::EXPORT_AUTOMATICALLY, SyncIntent::ACTION_CREATE);
+}
+
+/**
+ * Export the entity automatically if configured to do so.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ */
+function cms_content_sync_entity_update(EntityInterface $entity) {
+  if (!_cms_content_sync_is_installed()) {
+    return;
+  }
+
+  // When updating the tree, Drupal Core does NOT update the parent and weight of the tern when saving it.
+  // Instead, they manipulate the tree afterwards WITHOUT triggering the save again.
+  // The values provided by the form submit are also WRONG as Drupal keeps the parent that was set but changes the
+  // weight unpredictably.
+  // So we need to skip exporting these and instead export them all at once after the full save routing from Drupal
+  // is done.
+  if (_cms_content_sync_update_taxonomy_tree_static()) {
+    _cms_content_sync_update_taxonomy_tree_static(TRUE, $entity);
+    return;
+  }
+
+  if ($entity instanceof FieldableEntityInterface) {
+    DefaultEntityReferenceHandler::saveEmbeddedExportPools($entity);
+  }
+
+  // This is actually an update, but for the case this entity existed
+  // before the synchronization was created or the entity could not be
+  // exported before for any reason, using ::ACTION_UPDATE would lead to
+  // errors. Thus we're just using ::ACTION_CREATE which always works.
+  ExportIntent::exportEntityFromUi($entity, ExportIntent::EXPORT_AUTOMATICALLY, SyncIntent::ACTION_UPDATE);
+}
+
+/**
+ * Export the entity deletion automatically if configured to do so.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *
+ * @throws \Exception If this entity has been imported and local deletion is
+ *   forbidden, this will throw an error.
+ */
+function cms_content_sync_entity_delete(EntityInterface $entity) {
+  if (!_cms_content_sync_is_installed()) {
+    return;
+  }
+
+  if ($entity->bundle() != 'cms_content_sync_entity_status') {
+    if (!Flow::isLocalDeletionAllowed($entity) &&
+      !ImportIntent::entityHasBeenImportedByRemote()) {
+      throw new \Exception($entity->label() . ' cannot be deleted as it has been imported.');
+    }
+
+    ExportIntent::exportEntityFromUi($entity, ExportIntent::EXPORT_AUTOMATICALLY, SyncIntent::ACTION_DELETE);
+    // If the entity has been deleted, there will be no "push changes" button, so this content has to be deleted automatically as well.
+    ExportIntent::exportEntityFromUi($entity, ExportIntent::EXPORT_MANUALLY, SyncIntent::ACTION_DELETE);
+    // If the entity has been deleted as a dependency, it's deletion also has to be exported.
+    ExportIntent::exportEntityFromUi($entity, ExportIntent::EXPORT_AS_DEPENDENCY, SyncIntent::ACTION_DELETE);
+  }
+}
+
+/**
+ * Implements hook_entity_translation_delete().
+ */
+function cms_content_sync_entity_translation_delete(EntityInterface $translation) {
+  if (!_cms_content_sync_is_installed()) {
+    return;
+  }
+
+  ExportIntent::exportEntityFromUi($translation, ExportIntent::EXPORT_AUTOMATICALLY, SyncIntent::ACTION_DELETE_TRANSLATION);
+}
+
+/**
+ * Update the password at Sync Core if it's necessary for authentication.
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
+function cms_content_sync_user_password_submit(&$form, FormStateInterface $form_state) {
+  if (!_cms_content_sync_is_installed()) {
+    return;
+  }
+
+  $uid = $form_state->getValue('uid');
+
+  if (CMS_CONTENT_SYNC_USER_ID == $uid) {
+    $new_data = [
+      'userName' => $form_state->getValue('name'),
+      'userPass' => $form_state->getValue('pass'),
+    ];
+
+    // If password wasn't changed then value will be empty and we don't need it.
+    $new_data = array_filter($new_data);
+    $new_data = cms_content_sync_encrypt_values($new_data);
+
+    $userId   = $form_state->getValue('uid');
+    $userData = \Drupal::service('user.data');
+
+    $old_data = $userData->get('cms_content_sync', $userId, 'sync_data');
+    $new_data = array_replace($old_data, $new_data);
+
+    $userData->set('cms_content_sync', $userId, 'sync_data', $new_data);
+
+    $flows = Flow::getAll();
+
+    foreach ($flows as $flow) {
+      $flow->save();
+    }
+  }
+}
+
+/**
+ * Encrypt the provided values. This is used to securely store the
+ * authentication password necessary for Sync Core to make changes.
+ *
+ * @param array $values
+ *   The values to encrypt.
+ *
+ * @return array The input array, but with encrypted values.
+ */
+function cms_content_sync_encrypt_values(array $values) {
+  $encryption_profile = EncryptionProfile::load(cms_content_sync_PROFILE_NAME);
+
+  foreach ($values as $key => $value) {
+    $values[$key] = \Drupal::service('encryption')
+      ->encrypt($value, $encryption_profile);
+  }
+
+  return $values;
+}
+
+/**
+ * Disable all form elements if the content has been imported and the user
+ * should not be able to alter imported content.
+ *
+ * @see \cms_content_sync_form_alter()
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state to get default values from.
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ */
+function _cms_content_sync_form_alter_disabled_fields(array &$form, FormStateInterface $form_state, EntityInterface $entity) {
+  $value_path = [];
+  if (!empty($form['#field_parents'])) {
+    $value_path = $form['#field_parents'];
+  }
+
+  if ($entity->getEntityTypeId() == 'paragraph') {
+    $value_path[] = $entity->get('parent_field_name')->value;
+    $value_path[] = $form['#delta'];
+  }
+
+  $value_path[] = 'cms_content_sync_edit_override';
+
+  if ($form_state->hasValue($value_path)) {
+    $value = boolval($form_state->getValue($value_path));
+  }
+  else {
+    $input = $form_state->getUserInput();
+    foreach ($value_path as $key) {
+      if (empty($input[$key])) {
+        $input = NULL;
+        break;
+      }
+      $input = $input[$key];
+    }
+    $value = boolval($input);
+  }
+
+  $entity_status = EntityStatus::getInfosForEntity(
+    $entity->getEntityTypeId(),
+    $entity->uuid()
+  );
+  $behavior = NULL;
+  $overridden = FALSE;
+  $import_deletion = FALSE;
+  $merged_fields = [];
+  foreach ($entity_status as $info) {
+    if (!$info || !$info->getLastImport()) {
+      continue;
+    }
+    if ($info->isSourceEntity()) {
+      continue;
+    }
+    if (!$info->getFlow()) {
+      continue;
+    }
+
+    $config = $info->getFlow()
+      ->getEntityTypeConfig($entity->getEntityTypeId(), $entity->bundle());
+    if ($config['import_updates'] == ImportIntent::IMPORT_UPDATE_FORCE_AND_FORBID_EDITING ||
+      $config['import_updates'] == ImportIntent::IMPORT_UPDATE_FORCE_UNLESS_OVERRIDDEN) {
+      $behavior = $config['import_updates'];
+      $overridden = $info->isOverriddenLocally() || $value;
+      $import_deletion = boolval($config['import_deletion_settings']['import_deletion']);
+
+      if (EntityHandlerPluginManager::isEntityTypeFieldable($entity->getEntityTypeId())) {
+        /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $entityFieldManager */
+        $entityFieldManager = \Drupal::service('entity_field.manager');
+        $type = $entity->getEntityTypeId();
+        $bundle = $entity->bundle();
+        $field_definitions = $entityFieldManager->getFieldDefinitions($type, $bundle);
+        foreach ($field_definitions as $key => $definition) {
+          $field_config = $info->getFlow()
+            ->getFieldHandlerConfig($entity->getEntityTypeId(), $entity->bundle(), $key);
+          if (!empty($field_config['handler_settings']['merge_local_changes'])) {
+            $merged_fields[] = $definition->getLabel();
+          }
+        }
+      }
+      break;
+    }
+  }
+
+  if (!$behavior) {
+    return;
+  }
+
+  $id = bin2hex(random_bytes(4));
+
+  $allow_overrides = $behavior == ImportIntent::IMPORT_UPDATE_FORCE_UNLESS_OVERRIDDEN;
+
+  // $hide_elements = ['container', 'vertical_tabs', 'details'];.
+  foreach ($form as $key => $form_item) {
+    if (!is_array($form_item)) {
+      continue;
+    }
+    if (!isset($form_item['#type'])) {
+      continue;
+    }
+    if ($key != 'actions') {
+      if ($allow_overrides) {
+        // If we used the DISABLED attribute, we couldn't reliably remove it
+        // from all elements, as some should still have the attribute from other
+        // circumstances and we would also have to apply it nested.
+        // Otherwise we'd have to either submit the form and redirect to the
+        // edit page or reload the whole form via AJAX, conflicting with
+        // embedded forms.
+        // So instead we hide and show the elements via JavaScript, leading
+        // to the best usability and overall simplest / most reliable
+        // implementation from the options available.
+        $form[$key]['#attributes']['class'][] = 'cms-content-sync-edit-override-id-' . $id;
+        if (!$overridden) {
+          $form[$key]['#attributes']['class'][] = 'cms-content-sync-edit-override-hide';
+        }
+      }
+      else {
+        if ($form[$key]['#type'] != 'hidden' && $form[$key]['#type'] != 'token' && empty($form[$key]['#disabled'])) {
+          if ($key == 'menu') {
+            $allow = TRUE;
+
+            $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
+            /**
+             * @var \Drupal\Core\Menu\MenuLinkManager $menu_link_manager
+             */
+            $menu_items = $menu_link_manager->loadLinksByRoute('entity.' . $entity->getEntityTypeId() . '.canonical', [$entity->getEntityTypeId() => $entity->id()]);
+            foreach ($menu_items as $menu_item) {
+              if (!($menu_item instanceof MenuLinkContent)) {
+                continue;
+              }
+
+              /**
+               * @var \Drupal\menu_link_content\Entity\MenuLinkContent $item
+               */
+              $item = \Drupal::service('entity.repository')
+                ->loadEntityByUuid('menu_link_content', $menu_item->getDerivativeId());
+
+              if (!$item) {
+                continue;
+              }
+
+              $entity_status = EntityStatus::getInfosForEntity(
+                $item->getEntityTypeId(),
+                $item->uuid()
+              );
+              foreach ($entity_status as $info) {
+                if (!$info || !$info->getLastImport()) {
+                  continue;
+                }
+                if ($info->isSourceEntity()) {
+                  continue;
+                }
+                if (!$info->getFlow()) {
+                  continue;
+                }
+
+                $config = $info->getFlow()
+                  ->getEntityTypeConfig($item->getEntityTypeId(), $item->bundle());
+                if ($config['import_updates'] == ImportIntent::IMPORT_UPDATE_FORCE_AND_FORBID_EDITING ||
+                  ($config['import_updates'] == ImportIntent::IMPORT_UPDATE_FORCE_UNLESS_OVERRIDDEN && !$info->isOverriddenLocally())) {
+                  $allow = FALSE;
+                }
+              }
+            }
+
+            if ($allow) {
+              continue;
+            }
+          }
+
+          // This will transform the field from being disabled to being readonly instead. This will interfere with
+          // Drupal's default behavior however, so we leave it out by default.
+          // $form[$key]['#attributes']['class'][] = 'cms-content-sync-edit-override-disabled';.
+          $form[$key]['#disabled'] = TRUE;
+        }
+      }
+    }
+  }
+
+  $is_embedded = $entity->getEntityTypeId() == 'paragraph';
+
+  if ($allow_overrides) {
+    $form['cms_content_sync_edit_override'] = [
+      '#type' => 'checkbox',
+      '#default_value' => $overridden,
+      '#weight' => -10000,
+      '#title' => t('Overwrite locally and ignore future remote updates'),
+      '#description' => t('%label has been imported and future remote updates would overwrite local changes.<br>Checking this will make sure that future remote updates will be ignored so your local changes persist.<br>Unchecking this will immediately reset all local changes.', [
+        '%label' => $is_embedded ? t('This content') : $entity->label(),
+      ]) .
+      (count($merged_fields) ? '<br>' . t('Changes to @name will still be merged.', ['@name' => implode(', ', $merged_fields)]) : '') .
+      ($import_deletion ? '<br><strong>' . t('If the remote content is deleted, this content will also be deleted locally.') . '</strong>' : ''),
+      '#attributes' => [
+        'class' => ['cms-content-sync-edit-override'],
+        'data-cms-content-sync-edit-override-id' => $id,
+      ],
+    ];
+    $form['cms_content_sync_edit_override__entity_type'] = [
+      '#type'   => 'hidden',
+      '#value'  => $entity->getEntityTypeId(),
+    ];
+    $form['cms_content_sync_edit_override__entity_uuid'] = [
+      '#type'   => 'hidden',
+      '#value'  => $entity->uuid(),
+    ];
+    $form['actions']['submit']['#submit'][] = '_cms_content_sync_override_entity_submit';
+  }
+  elseif (!$is_embedded) {
+    $messenger = \Drupal::messenger();
+    $messenger->addWarning(t('%label cannot be edited as it has been imported.', [
+      '%label' => $entity->label(),
+    ]));
+  }
+}
+
+/**
+ * Entity status update.
+ *
+ * Update the EntityStatus for the given entity, setting
+ * the EntityStatus::FLAG_EDIT_OVERRIDE flag accordingly.
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
+function _cms_content_sync_override_entity_submit(array $form, FormStateInterface $form_state) {
+  $value = boolval($form_state->getValue('cms_content_sync_edit_override'));
+
+  /**
+   * @var \Drupal\Core\Entity\EntityInterface $entity
+   */
+  $entity = $form_state
+    ->getFormObject()
+    ->getEntity();
+
+  $entity_status = EntityStatus::getInfosForEntity(
+    $entity->getEntityTypeId(),
+    $entity->uuid()
+  );
+  foreach ($entity_status as $info) {
+    if (!$info || !$info->getLastImport() || !$info->getFlow()) {
+      continue;
+    }
+
+    $config = $info->getFlow()
+      ->getEntityTypeConfig($entity->getEntityTypeId(), $entity->bundle());
+
+    if ($config['import_updates'] == ImportIntent::IMPORT_UPDATE_FORCE_UNLESS_OVERRIDDEN) {
+      if ($value != $info->isOverriddenLocally()) {
+        $info->isOverriddenLocally($value);
+        $info->save();
+
+        if (!$value) {
+          _cms_content_sync_reset_entity($entity, $info->getFlow());
+        }
+      }
+      break;
+    }
+  }
+}
+
+/**
+ *
+ */
+function _cms_content_sync_reset_entity($entity, $flow) {
+  $exporter = new SyncCoreFlowExport($flow);
+  if ($entity instanceof ConfigEntityInterface) {
+    $shared_entity_id = $entity->id();
+  }
+  else {
+    $shared_entity_id = $entity->uuid();
+  }
+
+  $result = $exporter->pull($entity->getEntityTypeId(), $entity->bundle(), $shared_entity_id);
+
+  foreach ($result as $url => $response) {
+    if (!$response) {
+      drupal_set_message(t('Overwrite changed, but failed to pull entity @entity_type_id @bundle @label (@uuid)', [
+        '@entity_type_id' => $entity->getEntityTypeId(),
+        '@bundle' => $entity->bundle(),
+        '@label' => $entity->label(),
+        '@uuid' => $entity->uuid(),
+      ]));
+    }
+    else {
+      drupal_set_message(t('Overwrite changed; @entity_type_id @bundle @label has been reset from the source.', [
+        '@entity_type_id' => $entity->getEntityTypeId(),
+        '@bundle' => $entity->bundle(),
+        '@label' => $entity->label(),
+        '@uuid' => $entity->uuid(),
+      ]));
+    }
+  }
+}
+
+/**
+ * Entity status update.
+ *
+ * Update the EntityStatus for the given entity, setting
+ * the EntityStatus::FLAG_EDIT_OVERRIDE flag accordingly.
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
+function _cms_content_sync_override_embedded_entity_submit(array $form, FormStateInterface $form_state) {
+  $value = boolval($form_state->getValue('cms_content_sync_edit_override'));
+
+  /**
+   * @var \Drupal\Core\Entity\EntityInterface $entity
+   */
+  $entity = $form_state
+    ->getFormObject()
+    ->getEntity();
+
+  if ($entity instanceof FieldableEntityInterface) {
+    _cms_content_sync_override_embedded_entity_save_status_entity($entity, $form, $form_state, [], !$value);
+  }
+}
+
+/**
+ *
+ */
+function _cms_content_sync_override_embedded_entity_save_status_entity(FieldableEntityInterface $entity, array $form, FormStateInterface $form_state, $tree_position = [], $force_disable = FALSE) {
+  $entityFieldManager = \Drupal::service('entity_field.manager');
+  /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
+  $fields = $entityFieldManager->getFieldDefinitions($entity->getEntityTypeId(), $entity->bundle());
+  foreach ($fields as $name => $definition) {
+    if ($definition->getType() == 'entity_reference_revisions') {
+      $subform = &$form[$name]['widget'];
+      $count   = $subform['#max_delta'];
+      for ($i = 0; $i <= $count; $i++) {
+        $value = $force_disable ? FALSE : boolval($form_state->getValue(array_merge($tree_position, [$name, $i, 'cms_content_sync_edit_override'])));
+        $embedded_entity_type = $form_state->getValue(array_merge($tree_position, [$name, $i, 'cms_content_sync_edit_override__entity_type']));
+        $embedded_entity_uuid = $form_state->getValue(array_merge($tree_position, [$name, $i, 'cms_content_sync_edit_override__entity_uuid']));
+
+        // In case editing has been restricted by other code, we have to
+        // ignore this item.
+        if (!$embedded_entity_type || !$embedded_entity_uuid) {
+          continue;
+        }
+
+        $embedded_entity = \Drupal::service('entity.repository')
+          ->loadEntityByUuid(
+            $embedded_entity_type,
+            $embedded_entity_uuid
+          );
+        if (!$embedded_entity) {
+          continue;
+        }
+
+        if (!empty($subform[$i]['subform'])) {
+          _cms_content_sync_override_embedded_entity_save_status_entity($embedded_entity, $subform[$i]['subform'], $form_state, [$name, $i, 'subform'], !$value);
+        }
+
+        $entity_status = EntityStatus::getInfosForEntity(
+          $embedded_entity->getEntityTypeId(),
+          $embedded_entity->uuid()
+        );
+        foreach ($entity_status as $info) {
+          if (!$info || !$info->getLastImport() || !$info->getFlow()) {
+            continue;
+          }
+          $config = $info->getFlow()
+            ->getEntityTypeConfig($embedded_entity->getEntityTypeId(), $embedded_entity->bundle());
+          if ($config['import_updates'] == ImportIntent::IMPORT_UPDATE_FORCE_UNLESS_OVERRIDDEN) {
+            if ($value != $info->isOverriddenLocally()) {
+              $info->isOverriddenLocally($value);
+              $info->save();
+
+              if (!$value && !$force_disable) {
+                _cms_content_sync_reset_entity($embedded_entity, $info->getFlow());
+              }
+            }
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function cms_content_sync_theme() {
+  $theme['cms_content_sync_content_dashboard'] = [
+    'variables' => ['configuration' => NULL],
+    'template' => 'cms_content_sync_content_dashboard',
+  ];
+
+  $theme['cms_content_sync_introduction'] = [
+    'variables' => ['supported_entity_types' => NULL],
+    'template' => 'cms_content_sync_introduction',
+  ];
+
+  $theme['cms_content_sync_show_usage'] = [
+    'variables' => ['usage' => NULL],
+    'template' => 'cms_content_sync_show_usage',
+  ];
+
+  return $theme;
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ *
+ * Provide "push changes" option.
+ */
+function cms_content_sync_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  if (!_cms_content_sync_is_installed()) {
+    return;
+  }
+
+  $operations += cms_content_sync_get_publish_changes_operations($entity);
+  $operations += cms_content_sync_show_usage_operation($entity);
+}
+
+/**
+ * Returns operations for "push changes" action.
+ */
+function cms_content_sync_get_publish_changes_operations(EntityInterface $entity) {
+  if (!Drupal::currentUser()->hasPermission('publish cms content sync changes')) {
+    return [];
+  }
+
+  $operations = [];
+
+  /** @var \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination */
+  $redirect_destination = Drupal::service('redirect.destination');
+
+  $flows = ExportIntent::getFlowsForEntity($entity, ExportIntent::EXPORT_MANUALLY);
+
+  if (!count($flows)) {
+    return [];
+  }
+
+  foreach ($flows as $flow) {
+    $route_parameters = [
+      'flow_id' => $flow->id(),
+      'entity' => $entity->id(),
+      'entity_type' => $entity->getEntityTypeId(),
+    ];
+
+    $operations['publish_changes_' . $flow->id()] = [
+      'title' => t('Push changes - %name', ['%name' => $flow->name]),
+      'weight' => 150,
+      'url' => Url::fromRoute('cms_content_sync.publish_changes', $route_parameters),
+      'query' => $redirect_destination->getAsArray(),
+    ];
+  }
+
+  return $operations;
+}
+
+/**
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *
+ * @return array
+ *
+ *   Callback function for the show operation entity action.
+ */
+function cms_content_sync_show_usage_operation(EntityInterface $entity) {
+  $operations = [];
+
+  $flows = ExportIntent::getFlowsForEntity($entity, ExportIntent::EXPORT_ANY);
+  if (!count($flows)) {
+    return [];
+  }
+
+  $status_entities = EntityStatus::getInfosForEntity($entity->getEntityTypeId(), $entity->uuid());
+
+  $is_exported = FALSE;
+  foreach ($status_entities as $status_entity) {
+    $last_export = $status_entity->get('last_export')->value;
+    if (!is_null($last_export)) {
+      $is_exported = TRUE;
+    }
+  }
+
+  // Only show the operation for entities which have been exported.
+  if ($is_exported) {
+    $operations['show_usage'] = [
+      'title' => t('Show usage'),
+      'weight' => 151,
+      'attributes' => [
+        'class' => ['use-ajax'],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => Json::encode([
+          'width' => 700,
+        ]),
+      ],
+      'url' => Url::fromRoute('cms_content_sync.show_usage', [
+        'entity' => $entity->id(),
+        'entity_type' => $entity->getEntityTypeId(),
+      ]),
+    ];
+  }
+
+  return $operations;
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function cms_content_sync_entity_operation(EntityInterface $entity) {
+  $operations = [];
+  $entity->getEntityType();
+  if ($entity->getEntityTypeId() == 'cms_content_sync_flow') {
+    $enabled = !empty(Flow::getAll()[$entity->id()]);
+
+    if ($enabled) {
+      $operations['export'] = [
+        'title' => t('Export'),
+        'weight' => 10,
+        'url' => Url::fromRoute('entity.cms_content_sync_flow.export', ['cms_content_sync_flow' => $entity->id()]),
+      ];
+
+      $operations['pull_all'] = [
+        'title' => t('Pull all'),
+        'weight' => 10,
+        'url' => Url::fromRoute('entity.cms_content_sync_flow.pull_confirmation', ['cms_content_sync_flow' => $entity->id()]),
+      ];
+
+      $operations['push_all'] = [
+        'title' => t('Push all'),
+        'weight' => 10,
+        'url' => Url::fromRoute('entity.cms_content_sync_flow.push_confirmation', ['cms_content_sync_flow' => $entity->id()]),
+      ];
+    }
+
+    $set_status_title = $enabled ? t('Set inactive') : t('Set active');
+
+    $operations['set_status'] = [
+      'title' => $set_status_title,
+      'weight' => 10,
+      'url' => Url::fromRoute('entity.cms_content_sync_flow.set_status', ['cms_content_sync_flow' => $entity->id()]),
+    ];
+  }
+  elseif ($entity->getEntityTypeId() == 'cms_content_sync_pool') {
+    $operations['export'] = [
+      'title' => t('Export'),
+      'weight' => 10,
+      'url' => Url::fromRoute('entity.cms_content_sync_pool.export', ['cms_content_sync_pool' => $entity->id()]),
+    ];
+
+    $operations['reset_status'] = [
+      'title' => t('Reset status entities'),
+      'weight' => 10,
+      'url' => Url::fromRoute('entity.cms_content_sync_pool.reset_status_entity_confirmation', ['cms_content_sync_pool' => $entity->id()]),
+    ];
+  }
+
+  return $operations;
+}
+
+/**
+ * Implements hook_form_menu_edit_form_alter().
+ *
+ * Provide "push changes" action link.
+ */
+function cms_content_sync_form_menu_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $links = [];
+  if (!empty($form['links']['links'])) {
+    $links = Element::children($form['links']['links']);
+  }
+  foreach ($links as $link_key) {
+    $link = $form['links']['links'][$link_key];
+
+    /** @var \Drupal\menu_link_content\Plugin\Menu\MenuLinkContent $menu_link */
+    $menu_link = $link['#item']->link;
+    if (!method_exists($menu_link, 'getEntity')) {
+      continue;
+    }
+
+    // We need to get an Entity at this point,
+    // but 'getEntity' is protected for some reason.
+    // So we don't have other choice here but use a reflection.
+    $menu_link_reflection = new ReflectionMethod('\Drupal\menu_link_content\Plugin\Menu\MenuLinkContent', 'getEntity');
+    $menu_link_reflection->setAccessible(TRUE);
+    $menu_link_entity = $menu_link_reflection->invoke($menu_link, 'getEntity');
+
+    $form['links']['links'][$link_key]['operations']['#links'] += cms_content_sync_get_publish_changes_operations($menu_link_entity);
+  }
+
+}

@@ -1,0 +1,29 @@
+entity.cms_content_sync.sync_health:
+  title: Sync Health
+  route_name: entity.cms_content_sync.sync_health
+  base_route: system.admin_content
+  weight: 31
+
+entity.cms_content_sync.sync_health.overview:
+  title: Overview
+  route_name: entity.cms_content_sync.sync_health
+  parent_id: entity.cms_content_sync.sync_health
+  weight: 10
+
+entity.cms_content_sync.sync_health.export:
+  title: Export
+  route_name: entity.cms_content_sync.sync_health.export
+  parent_id: entity.cms_content_sync.sync_health
+  weight: 20
+
+entity.cms_content_sync.sync_health.import:
+  title: Import
+  route_name: entity.cms_content_sync.sync_health.import
+  parent_id: entity.cms_content_sync.sync_health
+  weight: 30
+
+entity.cms_content_sync.sync_health.entity_status:
+  title: Entity Status
+  route_name: view.content_sync_entity_status.entity_status_overview
+  parent_id: entity.cms_content_sync.sync_health
+  weight: 40

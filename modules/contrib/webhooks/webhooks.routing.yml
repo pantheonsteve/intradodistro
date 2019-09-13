@@ -1,0 +1,15 @@
+webhooks.webhook_receive:
+  path: '/webhook/{incoming_webhook_name}'
+  methods: [POST]
+  defaults:
+    _controller: '\Drupal\webhooks\Controller\WebhookController::receive'
+    _title: 'Webhooks receiver'
+  requirements:
+    _custom_access: '\Drupal\webhooks\Controller\WebhookController::access'
+
+webhooks.webhook_toggle_active:
+  path: '/admin/config/services/webhook/{id}/toggle_active'
+  defaults:
+    _controller: '\Drupal\webhooks\Controller\WebhookController::toggleActive'
+  requirements:
+    _permission: 'administer webhooks'

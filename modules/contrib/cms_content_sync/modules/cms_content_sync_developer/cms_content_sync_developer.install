@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Install file for cms_content_sync_developer.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function cms_content_sync_developer_install() {
+  // Set module weight higher then the cms_content_sync module to ensure
+  // update hooks are triggered after it.
+  module_set_weight('cms_content_sync_developer', 100);
+
+  // Cache rebuild is require, otherwise the module weight does not take effect.
+  drupal_flush_all_caches();
+}
+
+/**
+ * Implements hook_unstall()
+ */
+function cms_content_sync_developer_uninstall() {
+  // Delete developer settings.
+  Drupal::configFactory()->getEditable('cms_content_sync.developer')->delete();
+}
+
+/**
+ * Update the module weight.
+ */
+function cms_content_sync_developer_update_8001(&$sandbox) {
+  // Set module weight higher then the cms_content_sync module to ensure
+  // update hooks are triggered after it.
+  module_set_weight('cms_content_sync_developer', 100);
+
+  return 'Updated module weight to execute hooks after main module.';
+}

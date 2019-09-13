@@ -1,0 +1,101 @@
+<?php
+
+/**
+ * @file
+ * Contains webhooks.module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\webhooks\Webhook;
+
+/**
+ * Implements hook_help().
+ */
+function webhooks_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the webhooks module.
+    case 'help.page.webhooks':
+      $output = '';
+      $output .= '<h3>' . t('Webhooks') . '</h3>';
+      $output .= '<p>' . t('Webhooks module') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function webhooks_entity_insert(EntityInterface $entity) {
+  $event = implode(':', ['entity', $entity->getEntityType()->id(), 'create']);
+
+  /** @var \Drupal\webhooks\WebhooksService $webhooks_service */
+  $webhooks_service = \Drupal::service('webhooks.service');
+
+  // Load all webhooks for the occurring event.
+  $webhook_configs = $webhooks_service->loadMultipleByEvent($event);
+
+  /** @var \Drupal\webhooks\Entity\WebhookConfig $webhook_config */
+  foreach ($webhook_configs as $webhook_config) {
+    // Create the Webhook object.
+    $webhook = new Webhook(
+      ['entity' => $entity->toArray()],
+      [],
+      $event
+    );
+    // Send the Webhook object.
+    $webhooks_service->send($webhook_config, $webhook);
+  }
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function webhooks_entity_update(EntityInterface $entity) {
+  $event = implode(':', ['entity', $entity->getEntityType()->id(), 'update']);
+
+  /** @var \Drupal\webhooks\WebhooksService $webhooks_service */
+  $webhooks_service = \Drupal::service('webhooks.service');
+
+  // Load all webhooks for the occurring event.
+  $webhook_configs = $webhooks_service->loadMultipleByEvent($event);
+
+  /** @var \Drupal\webhooks\Entity\WebhookConfig $webhook_config */
+  foreach ($webhook_configs as $webhook_config) {
+    // Create the Webhook object.
+    $webhook = new Webhook(
+      ['entity' => $entity->toArray()],
+      [],
+      $event
+    );
+    // Send the Webhook object.
+    $webhooks_service->send($webhook_config, $webhook);
+  }
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function webhooks_entity_delete(EntityInterface $entity) {
+  $event = implode(':', ['entity', $entity->getEntityType()->id(), 'delete']);
+
+  /** @var \Drupal\webhooks\WebhooksService $webhooks_service */
+  $webhooks_service = \Drupal::service('webhooks.service');
+
+  // Load all webhooks for the occurring event.
+  $webhook_configs = $webhooks_service->loadMultipleByEvent($event);
+
+  /** @var \Drupal\webhooks\Entity\WebhookConfig $webhook_config */
+  foreach ($webhook_configs as $webhook_config) {
+    // Create the Webhook object.
+    $webhook = new Webhook(
+      ['entity' => $entity->toArray()],
+      [],
+      $event
+    );
+    // Send the Webhook object.
+    $webhooks_service->send($webhook_config, $webhook);
+  }
+}

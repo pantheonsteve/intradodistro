@@ -1,0 +1,4 @@
+services:
+  webhooks.service:
+    class: Drupal\webhooks\WebhooksService
+    arguments: ['@http_client', '@logger.factory', '@request_stack', '@event_dispatcher', '@entity.query', '@entity_type.manager']

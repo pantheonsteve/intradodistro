@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - cms_content_sync
+    - cms_content_sync_views
+id: import_status_entity
+label: 'Force Import'
+type: cms_content_sync_entity_status
+plugin: import_status_entity
+configuration: {  }

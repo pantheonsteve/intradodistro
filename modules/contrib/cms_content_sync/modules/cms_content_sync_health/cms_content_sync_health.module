@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * Module file for cms_content_sync_health.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function cms_content_sync_health_theme() {
+  $theme['cms_content_sync_sync_health_overview'] = [
+    'variables' => [
+      'sync_cores' => NULL,
+      'module_version' => NULL,
+      'newest_version' => NULL,
+      'export_failures_hard' => NULL,
+      'export_failures_soft' => NULL,
+      'import_failures_hard' => NULL,
+      'import_failures_soft' => NULL,
+      'version_differences' => NULL,
+      'site_log_disabled' => NULL,
+      'error_log' => NULL,
+      'warning_log' => NULL,
+    ],
+    'template' => 'cms_content_sync_sync_health_overview',
+  ];
+
+  $theme['cms_content_sync_sync_health_export'] = [
+    'variables' => [
+      'export_failures_hard' => NULL,
+      'export_failures_soft' => NULL,
+      'pending' => NULL,
+    ],
+    'template' => 'cms_content_sync_sync_health_export',
+  ];
+
+  $theme['cms_content_sync_sync_health_import'] = [
+    'variables' => [
+      'import_failures_hard' => NULL,
+      'import_failures_soft' => NULL,
+    ],
+    'template' => 'cms_content_sync_sync_health_import',
+  ];
+
+  return $theme;
+}

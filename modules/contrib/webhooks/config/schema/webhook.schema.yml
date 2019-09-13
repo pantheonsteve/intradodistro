@@ -1,0 +1,40 @@
+webhooks.webhook.*:
+  type: config_entity
+  label: 'Webhook config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+      label: 'UUID'
+    payload_url:
+      type: uri
+      label: 'Payload URL'
+    type:
+      type: string
+      label: 'Type'
+    last_usage:
+      type: date_format
+      label: 'Last usage of a Webhook'
+    events:
+      type: text
+      label: 'Events'
+    response_ok:
+      type: boolean
+      label: 'Response OK'
+    ref_entity_type:
+      type: string
+      label: 'Reference Entity Type'
+    ref_entity_id:
+      type: integer
+      label: 'Reference Entity ID'
+    secret:
+      type: string
+      label: 'Secret'
+    content_type:
+      type: string
+      label: 'Content Type'

@@ -1,0 +1,79 @@
+<?php
+
+/**
+ * @file
+ * Install file for cms_content_sync_views.
+ */
+
+use Drupal\Core\Config\FileStorage;
+
+/**
+ * Re-import the given config to reset it to defaults when they're changed in
+ * the module.
+ *
+ * @param $configsNames
+ */
+function _cms_content_sync_views_update_config($configsNames) {
+  $config_path    = drupal_get_path('module', 'cms_content_sync_views') . '/config/install';
+  $source         = new FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config_factory = \Drupal::configFactory();
+  $uuid_service   = \Drupal::service('uuid');
+
+  foreach ($configsNames as $name) {
+    $config_storage->write($name, $source->read($name));
+    $config_factory->getEditable($name)->set('uuid', $uuid_service->generate())->save();
+  }
+}
+
+/**
+ * Add new action configurations.
+ */
+function cms_content_sync_views_update_8003() {
+  $configsNames = [
+    'system.action.export_status_entity',
+    'system.action.import_status_entity',
+  ];
+
+  _cms_content_sync_views_update_config($configsNames);
+  return 'Added new configurations for views bulk operations.';
+}
+
+/**
+ * Add new action configurations.
+ */
+function cms_content_sync_views_update_8002() {
+  $configsNames = [
+    'system.action.reset_status_entity',
+  ];
+
+  _cms_content_sync_views_update_config($configsNames);
+  return 'Added new configurations for views bulk operations.';
+}
+
+/**
+ * Update the module weight.
+ *
+ * @return string
+ *
+ * @internal param $sandbox
+ */
+function cms_content_sync_views_update_8001() {
+  // Set module weight higher then the cms_content_sync module to ensure
+  // update hooks are triggered after it.
+  module_set_weight('cms_content_sync_views', 100);
+
+  return 'Updated module weight to execute hooks after main module.';
+}
+
+/**
+ * Implements hook_install().
+ */
+function cms_content_sync_views_install() {
+  // Set module weight higher then the cms_content_sync module to ensure
+  // update hooks are triggered after it.
+  module_set_weight('cms_content_sync_views', 100);
+
+  // Cache rebuild is require, otherwise the module weight does not take effect.
+  drupal_flush_all_caches();
+}

@@ -1,0 +1,30 @@
+entity.cms_content_sync.introduction:
+  title: Introduction
+  route_name: entity.cms_content_sync.introduction
+  base_route: entity.cms_content_sync.introduction
+
+entity.cms_content_sync_flow.collection:
+  title: Flows
+  route_name: entity.cms_content_sync_flow.collection
+  base_route: entity.cms_content_sync.introduction
+
+entity.cms_content_sync_pool.collection:
+  title: Pools
+  route_name: entity.cms_content_sync_pool.collection
+  base_route: entity.cms_content_sync.introduction
+
+cms_content_sync.settings_form:
+  title: Settings
+  route_name: cms_content_sync.settings_form
+  base_route: entity.cms_content_sync.introduction
+
+cms_content_sync.cms_content_sync_debug_form:
+  title: Debug
+  route_name: cms_content_sync.cms_content_sync_debug_form
+  base_route: entity.cms_content_sync.introduction
+
+entity.cms_content_sync.import:
+  title: Import
+  route_name: entity.cms_content_sync.content
+  base_route: system.admin_content
+  weight: 30

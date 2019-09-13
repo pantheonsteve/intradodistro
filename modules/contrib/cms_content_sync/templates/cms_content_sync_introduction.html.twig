@@ -1,0 +1,101 @@
+{#
+/**
+ * @file
+ * Template file for the introduction page.
+ */
+#}
+
+<h2>Site support</h2>
+The following entity types you're using can be synchronized by Content Sync:
+<table>
+  <thead>
+  <tr>
+    <th>
+      Name
+    </th>
+    <th>
+      Supported
+    </th>
+  </tr>
+  </thead>
+<tbody>
+{% for type in supported_entity_types %}
+  {% if not type.no_entity_type_handler and not type.required_field_not_supported %}
+  <tr>
+    <td>{{ type.entity_type }}.{{ type.bundle }}</td>
+      {% if type.optional_field_not_supported %}
+        <td class="warning">
+          Partially
+          {% if type.hint %}
+            ({{ type.hint }})
+          {% endif %}
+          <br>
+          The following optional fields are not supported:<br>
+          <ul>
+            {% for field in type.unsupported_optional_fields %}
+              <li>{{ field }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      {% else %}
+        <td class="info">
+          Yes
+          {% if type.hint %}
+            ({{ type.hint }})
+          {% endif %}
+        </td>
+      {% endif %}
+    </tr>
+  {% endif %}
+{% endfor %}
+</tbody>
+</table>
+<br><br>
+The following entity types you're using can <strong>NOT</strong> be synchronized by Content Sync:
+<table>
+  <thead>
+  <tr>
+    <th>
+      Name
+    </th>
+    <th>
+      Reason
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for type in supported_entity_types %}
+    {% if type.no_entity_type_handler or type.required_field_not_supported %}
+    <tr>
+      <td>{{ type.entity_type }}.{{ type.bundle }}</td>
+      {% if type.security_concerns %}
+        <td class="error">Security concerns</td>
+      {% elseif type.is_config_entity %}
+        <td class="error">Config entities are not supported yet</td>
+      {% elseif type.no_entity_type_handler %}
+        <td class="error">Not yet implemented</td>
+      {% elseif type.required_field_not_supported %}
+        <td class="error">
+          The following required fields are not yet supported:<br>
+          <ul>
+            {% for field in type.unsupported_required_fields %}
+              <li>{{ field }}</li>
+            {% endfor %}
+          </ul>
+          {% if type.optional_field_not_supported %}
+            Also, the following optional fields are not yet supported:<br>
+            <ul>
+              {% for field in type.unsupported_optional_fields %}
+                <li>{{ field }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </td>
+      {% endif %}
+    </tr>
+    {% endif %}
+  {% endfor %}
+  </tbody>
+</table>
+<br><br>
+<p>For further information about CMS Content Sync, please checkout our <a target="_blank" href="https://edge-box.atlassian.net/wiki/spaces/SUP/pages/143982665/Technical+Requirements">Technical Requirements</a> and <a target="_blank" href="https://edge-box.atlassian.net/wiki/spaces/SUP/">step-by-step tutorials</a>.</p>

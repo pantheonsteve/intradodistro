@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Module file for cms_content_sync_developer.
+ */
+
+/**
+ * Alter the list of config entities that should be ignored.
+ */
+function cms_content_sync_developer_config_ignore_settings_alter(array &$settings) {
+  $settings[] = 'cms_content_sync.developer:version_mismatch';
+}

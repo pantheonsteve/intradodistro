@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ */
+
+/**
+ * Update the module weight.
+ */
+function cms_content_sync_simple_sitemap_install() {
+  // Set module weight higher then the cms_content_sync module to ensure
+  // update hooks are triggered after it.
+  module_set_weight('cms_content_sync_simple_sitemap', 100);
+
+  return 'Updated module weight to execute hooks after main module.';
+}

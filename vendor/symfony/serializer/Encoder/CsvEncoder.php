@@ -178,8 +178,6 @@ class CsvEncoder implements EncoderInterface, DecoderInterface
     /**
      * Flattens an array and generates keys including the path.
      *
-     * @param array  $array
-     * @param array  $result
      * @param string $keySeparator
      * @param string $parentKey
      */
@@ -189,7 +187,8 @@ class CsvEncoder implements EncoderInterface, DecoderInterface
             if (\is_array($value)) {
                 $this->flatten($value, $result, $keySeparator, $parentKey.$key.$keySeparator);
             } else {
-                $result[$parentKey.$key] = $value;
+                // Ensures an actual value is used when dealing with true and false
+                $result[$parentKey.$key] = false === $value ? 0 : (true === $value ? 1 : $value);
             }
         }
     }

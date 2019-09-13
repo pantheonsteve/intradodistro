@@ -1,0 +1,12 @@
+.cms-content-sync-flow-form .form-actions {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #fff;
+  height: 40px;
+  margin-left: -33px;
+  padding-left: 33px;
+  margin-bottom: 0px;
+  padding-top: 10px;
+  border-top: 1px solid grey;
+}

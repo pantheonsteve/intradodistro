@@ -1,0 +1,3 @@
+access sync health:
+  title: 'Access Sync health'
+  description: 'Provides access to the Sync health dashboard.'

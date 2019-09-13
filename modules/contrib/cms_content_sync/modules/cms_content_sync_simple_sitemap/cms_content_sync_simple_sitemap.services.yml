@@ -1,0 +1,5 @@
+services:
+  cms_content_sync_simple_sitemap.event_subscriber:
+    class: Drupal\cms_content_sync_simple_sitemap\EventSubscriber\SimpleSitemapSyncExtend
+    tags:
+      - {name: event_subscriber}

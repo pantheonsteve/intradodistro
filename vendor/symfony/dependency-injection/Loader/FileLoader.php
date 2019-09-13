@@ -86,12 +86,11 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Registers a definition in the container with its instanceof-conditionals.
      *
-     * @param string     $id
-     * @param Definition $definition
+     * @param string $id
      */
     protected function setDefinition($id, Definition $definition)
     {
-        $this->container->addRemovedBindingIds($id);
+        $this->container->removeBindings($id);
 
         if ($this->isLoadingInstanceof) {
             if (!$definition instanceof ChildDefinition) {

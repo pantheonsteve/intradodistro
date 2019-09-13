@@ -1,0 +1,11 @@
+entity.cms_content_sync_flow.add_form:
+  route_name: 'entity.cms_content_sync_flow.add_form'
+  title: 'Add flow'
+  appears_on:
+    - entity.cms_content_sync_flow.collection
+
+entity.cms_content_sync_pool.add_form:
+  route_name: 'entity.cms_content_sync_pool.add_form'
+  title: 'Add pool'
+  appears_on:
+    - entity.cms_content_sync_pool.collection

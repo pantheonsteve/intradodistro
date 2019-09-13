@@ -1,0 +1,13 @@
+{
+  "name": "drupal/webhooks",
+  "type": "drupal-module",
+  "description": "User-defined HTTP callbacks",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/webhooks",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/webhooks",
+    "source": "http://cgit.drupalcode.org/webhooks"
+  },
+  "require": { }
+}

@@ -1,0 +1,7 @@
+services:
+  plugin.manager.cms_content_sync_entity_handler:
+    class: Drupal\cms_content_sync\Plugin\Type\EntityHandlerPluginManager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
+  plugin.manager.cms_content_sync_field_handler:
+    class: Drupal\cms_content_sync\Plugin\Type\FieldHandlerPluginManager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']

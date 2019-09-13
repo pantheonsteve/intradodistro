@@ -1,0 +1,14 @@
+name: Webhooks
+type: module
+description: "User-defined HTTP callbacks"
+# core: 8.x
+package: Webhooks
+dependencies:
+  - serialization
+configure: entity.webhook_config.collection
+
+# Information added by Drupal.org packaging script on 2016-08-12
+version: '8.x-1.0-alpha2'
+core: '8.x'
+project: 'webhooks'
+datestamp: 1471001342

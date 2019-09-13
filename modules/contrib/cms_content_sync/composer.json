@@ -1,0 +1,34 @@
+{
+  "name": "drupal/cms_content_sync",
+  "description": "CMS Content Sync is a module that provides content synchronization features between multiple Drupal sites using a Node.js based Content Sync backend.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "keywords": [
+    "Drupal",
+    "Content Sync"
+  ],
+  "homepage": "https://cms-content-sync.io/",
+  "authors": [
+    {
+      "name": "Edge Box GmbH",
+      "homepage": "https://cms-content-sync.io/"
+    }
+  ],
+  "require": {
+    "drupal/webhooks": "^1.0",
+    "drupal/encrypt": "^3.0",
+    "drupal/real_aes": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Drupal\\cms_content_sync\\": "src/"
+    }
+  },
+  "extra": {
+    "drush": {
+      "services": {
+        "drush.services.yml": "^9"
+      }
+    }
+  }
+}

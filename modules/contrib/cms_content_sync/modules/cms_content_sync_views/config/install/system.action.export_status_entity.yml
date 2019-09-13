@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - cms_content_sync
+    - cms_content_sync_views
+id: export_status_entity
+label: 'Force Export'
+type: cms_content_sync_entity_status
+plugin: export_status_entity
+configuration: {  }

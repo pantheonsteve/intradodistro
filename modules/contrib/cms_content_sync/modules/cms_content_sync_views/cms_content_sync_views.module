@@ -1,0 +1,208 @@
+<?php
+
+/**
+ * @file
+ * Module file for cms_content_sync_views.
+ */
+
+use Drupal\cms_content_sync\Entity\EntityStatus;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function cms_content_sync_views_entity_base_field_info(EntityTypeInterface $entity_type) {
+  $fields = [];
+
+  // Add the dynamic entity reference field to the entity status entity type.
+  if ($entity_type->id() === 'cms_content_sync_entity_status') {
+    $fields['entity'] = BaseFieldDefinition::create('dynamic_entity_reference')
+      ->setLabel(t('Entity'))
+      ->setDescription(t('Reference to the entity.'))
+      ->setCardinality(1)
+      ->setReadOnly(TRUE);
+  }
+
+  return $fields;
+}
+
+/**
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @param null|EntityInterface $reference
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function _cms_content_sync_views_set_dynamic_entity_reference_field(EntityInterface $entity, $reference = NULL) {
+  // Set the referenced entity for the entity status entity.
+  if (is_null($entity->get('entity')->target_id)) {
+    $entity_type = $entity->get('entity_type')->value;
+    $uuid = $entity->get('entity_uuid')->value;
+
+    /**
+     * @var \Drupal\Core\Entity\EntityInterface $synced_entity
+     */
+    if (empty($reference)) {
+      $synced_entity = \Drupal::service('entity.repository')->loadEntityByUuid($entity_type, $uuid);
+    }
+    else {
+      $synced_entity = $reference;
+    }
+
+    if ($synced_entity instanceof ConfigEntityInterface) {
+      return;
+    }
+
+    if (!is_null($synced_entity)) {
+      $entity->set('entity', $synced_entity);
+
+      // Save new reference.
+      $entity->save();
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_create().
+ *
+ * Required for the export.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ */
+function cms_content_sync_views_entity_create(EntityInterface $entity) {
+  if ($entity instanceof EntityStatus) {
+    _cms_content_sync_views_set_dynamic_entity_reference_field($entity);
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ *
+ * Required for the import.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ */
+function cms_content_sync_views_entity_insert(EntityInterface $entity) {
+  if ($entity instanceof EntityStatus) {
+    _cms_content_sync_views_set_dynamic_entity_reference_field($entity);
+  }
+}
+
+/**
+ * Implements hook_entity_update().
+ *
+ * Fallback.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ */
+function cms_content_sync_views_entity_update(EntityInterface $entity) {
+  if ($entity instanceof EntityStatus) {
+    _cms_content_sync_views_set_dynamic_entity_reference_field($entity);
+  }
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function cms_content_sync_views_data_alter(array &$data) {
+  $allowed_entity_types = [
+    'node',
+    'media',
+  ];
+
+  foreach ($allowed_entity_types as $allowed_entity_type) {
+    $data[$allowed_entity_type]['cms_content_sync_sync_state'] = [
+      'title' => t('Sync State'),
+      'field' => [
+        'title' => t('Sync State'),
+        'help' => t('Displays the CMS Content Sync Sync State.'),
+        'id' => 'cms_content_sync_sync_state',
+      ],
+      'filter' => [
+        'title' => t('Content synchronization'),
+        'help' => t('Filter if a entity has been imported or exported with CMS Content Sync.'),
+        'id' => 'cms_content_sync_sync_state_filter',
+      ],
+    ];
+  }
+
+  $data['cms_content_sync_entity_status']['cms_content_sync_rendered_flags'] = [
+    'title' => t('Rendered Flags'),
+    'field' => [
+      'title' => t('Rendered Flags'),
+      'help' => t('The status entity flags made human readable.'),
+      'id' => 'cms_content_sync_rendered_flags',
+    ],
+    'filter' => [
+      'title' => t('Rendered Flags'),
+      'help' => t('Creates a human readable flags filter.'),
+      'id' => 'cms_content_sync_flags_filter',
+    ],
+  ];
+
+  $data['cms_content_sync_entity_status']['entity_type'] = [
+    'title' => t('Entity Type'),
+    'field' => [
+      'title' => t('Entity Type label'),
+      'help' => t('The entity type label'),
+      'id' => 'cms_content_sync_entity_type_label',
+    ],
+    'filter' => [
+      'title' => t('Entity Type'),
+      'help' => t('Creates a human readable entity type filter.'),
+      'id' => 'cms_content_sync_entity_type_filter',
+    ],
+  ];
+
+  $data['cms_content_sync_entity_status']['pool'] = [
+    'title' => t('Pool label'),
+    'field' => [
+      'title' => t('Pool label'),
+      'help' => t('The pool label'),
+      'id' => 'cms_content_sync_pool_label',
+    ],
+    'filter' => [
+      'title' => t('Pool'),
+      'help' => t('Creates a human readable pool filter.'),
+      'id' => 'cms_content_sync_pool_filter',
+    ],
+  ];
+
+  $data['cms_content_sync_entity_status']['flow'] = [
+    'title' => t('Flow label'),
+    'field' => [
+      'title' => t('Flow label'),
+      'help' => t('The flow label'),
+      'id' => 'cms_content_sync_flow_label',
+    ],
+    'filter' => [
+      'title' => t('Flow'),
+      'help' => t('Creates a human readable flow filter.'),
+      'id' => 'cms_content_sync_flow_filter',
+    ],
+  ];
+
+  $data['cms_content_sync_entity_status']['parent_entity'] = [
+    'title' => t('Parent entity'),
+    'field' => [
+      'title' => t('Parent entity'),
+      'help' => t('The parent entity'),
+      'id' => 'cms_content_sync_parent_entity',
+    ],
+  ];
+}
+
+/**
+ *
+ */
+function cms_content_sync_views_theme($existing, $type, $theme, $path) {
+  return [
+    'sync_status' => [
+      'variables' => ['messages' => NULL],
+    ],
+    'rendered_flags' => [
+      'variables' => ['messages' => NULL],
+    ],
+  ];
+}

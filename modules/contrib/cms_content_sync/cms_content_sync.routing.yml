@@ -1,0 +1,214 @@
+# CMS Content Sync - Introduction
+entity.cms_content_sync.introduction:
+  path: '/admin/config/services/cms_content_sync/introduction'
+  defaults:
+    _controller: 'Drupal\cms_content_sync\Controller\Introduction::content'
+    _title: 'CMS Content Sync - Introduction'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+# CMS Content Sync - Flows
+entity.cms_content_sync_flow.collection:
+  path: '/admin/config/services/cms_content_sync/flow'
+  defaults:
+    _entity_list: 'cms_content_sync_flow'
+    _title: 'Flows - CMS Content Sync'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_flow.add_form:
+  path: '/admin/config/services/cms_content_sync/flow/add'
+  defaults:
+    _entity_form: 'cms_content_sync_flow.add'
+    _title: 'Add Flow to CMS Content Sync'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_flow.edit_form:
+  path: '/admin/config/services/cms_content_sync/flow/{cms_content_sync_flow}/edit'
+  defaults:
+    _entity_form: 'cms_content_sync_flow.edit'
+    _title: 'Edit Flow from CMS Content Sync'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_flow.delete_form:
+  path: '/admin/config/services/cms_content_sync/flow/{cms_content_sync_flow}/delete'
+  defaults:
+    _entity_form: 'cms_content_sync_flow.delete'
+    _title: 'Delete Flow from CMS Content Sync'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_flow.export:
+  path: '/admin/config/services/cms_content_sync/flow/{cms_content_sync_flow}/export'
+  defaults:
+    _controller: '\Drupal\cms_content_sync\Controller\FlowExport::export'
+    _title: 'Export Flow'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_flow.push:
+  path: '/admin/config/services/cms_content_sync/flow/{cms_content_sync_flow}/push'
+  defaults:
+    _controller: '\Drupal\cms_content_sync\Controller\FlowPush::push'
+    _title: 'Push all'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_flow.pull:
+  path: '/admin/config/services/cms_content_sync/flow/{cms_content_sync_flow}/{pull_mode}/pull'
+  defaults:
+    _controller: '\Drupal\cms_content_sync\Controller\FlowPull::pull'
+    _title: 'Pull all'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_flow.set_status:
+  path: '/admin/config/services/cms_content_sync/flow/{cms_content_sync_flow}/set-status'
+  defaults:
+    _controller: '\Drupal\cms_content_sync\Controller\SetFlowStatus::setStatus'
+    _title: 'Set Status'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_flow.pull_confirmation:
+  path: '/admin/config/services/cms_content_sync/flow/{cms_content_sync_flow}/pull-confirmation'
+  defaults:
+    _form: '\Drupal\cms_content_sync\Form\FlowPullConfirmation'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_flow.push_confirmation:
+  path: '/admin/config/services/cms_content_sync/flow/{cms_content_sync_flow}/push-confirmation'
+  defaults:
+    _form: '\Drupal\cms_content_sync\Form\FlowPushConfirmation'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_flow.push_confirmation:
+  path: '/admin/config/services/cms_content_sync/flow/{cms_content_sync_flow}/push-confirmation'
+  defaults:
+    _form: '\Drupal\cms_content_sync\Form\FlowPushConfirmation'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+# CMS Content Sync - Pools
+entity.cms_content_sync_pool.collection:
+  path: '/admin/config/services/cms_content_sync/pool'
+  defaults:
+    _entity_list: 'cms_content_sync_pool'
+    _title: 'Pools - CMS Content Sync'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_pool.add_form:
+  path: '/admin/config/services/cms_content_sync/pool/add'
+  defaults:
+    _entity_form: 'cms_content_sync_pool.add'
+    _title: 'Add Pool to CMS Content Sync'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_pool.edit_form:
+  path: '/admin/config/services/cms_content_sync/pool/{cms_content_sync_pool}/edit'
+  defaults:
+    _entity_form: 'cms_content_sync_pool.edit'
+    _title: 'Edit Pool from CMS Content Sync'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_pool.delete_form:
+  path: '/admin/config/services/cms_content_sync/pool/{cms_content_sync_pool}/delete'
+  defaults:
+    _entity_form: 'cms_content_sync_pool.delete'
+    _title: 'Delete Pool from CMS Content Sync'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+entity.cms_content_sync_pool.export:
+  path: '/admin/config/services/cms_content_sync/pool/{cms_content_sync_pool}/export'
+  defaults:
+    _controller: '\Drupal\cms_content_sync\Controller\PoolExport::export'
+    _title: 'Export Pool'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+cms_content_sync.cms_content_sync_pool.pool_required:
+  path: '/admin/config/services/cms_content_sync/flow/pool-required'
+  defaults:
+    _form: '\Drupal\cms_content_sync\Form\PoolRequired'
+  requirements:
+    _permission: 'publish cms content sync changes'
+
+entity.cms_content_sync_pool.reset_status_entity_confirmation:
+  path: '/admin/config/services/cms_content_sync/pool/{cms_content_sync_pool}/reset-status-entity-confirmation'
+  defaults:
+    _form: '\Drupal\cms_content_sync\Form\ResetStatusEntityConfirmation'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+# General settings
+cms_content_sync.settings_form:
+  path: '/admin/config/services/cms_content_sync/settings'
+  defaults:
+    _form: '\Drupal\cms_content_sync\Form\SettingsForm'
+    _title: 'Settings - CMS Content Sync'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+# Debug form
+cms_content_sync.cms_content_sync_debug_form:
+  path: '/admin/config/services/cms_content_sync/debug'
+  defaults:
+    _form: '\Drupal\cms_content_sync\Form\DebugForm'
+    _title: 'Debug - CMS Content Sync'
+  requirements:
+    _permission: 'administer cms content sync:'
+
+# CMS Content Sync - Push changes
+cms_content_sync.publish_changes:
+  path: '/cms-content-sync/publish-changes/{flow_id}/{entity}/{entity_type}'
+  defaults:
+    _controller: '\Drupal\cms_content_sync\Controller\PushChanges::pushChanges'
+  requirements:
+    _permission: 'publish cms content sync changes'
+  options:
+    parameters:
+      flow_id:
+        type: string
+      entity:
+        type: integer
+      entity_type:
+        type: string
+
+cms_content_sync.publish_changes_entities:
+  path: '/cms-content-sync/publish-changes/entities'
+  defaults:
+    _controller: '\Drupal\cms_content_sync\Controller\PushChanges::pushChangesEntitiesList'
+  requirements:
+    _permission: 'access content'
+
+node.cms_content_sync_export_publish_changes_confirm:
+  path: '/admin/content/push-changes/confirm'
+  defaults:
+    _form: '\Drupal\cms_content_sync\Form\PushChangesConfirm'
+  requirements:
+    _permission: 'publish cms content sync changes'
+
+entity.cms_content_sync.content:
+  path: '/admin/content/import'
+  defaults:
+    _controller: '\Drupal\cms_content_sync\Controller\ManualImport::content'
+    _title: 'Import Content'
+  requirements:
+    _permission: 'access cms content sync content overview'
+    _custom_access: '\Drupal\cms_content_sync\Controller\ManualImport::access'
+
+# Show usage
+cms_content_sync.show_usage:
+  path: '/cms-content-sync/show-usage/{entity}/{entity_type}'
+  defaults:
+    _controller: '\Drupal\cms_content_sync\Controller\ShowUsage::content'
+  requirements:
+    _permission: 'access content overview'

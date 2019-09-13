@@ -1,0 +1,37 @@
+cms_content_sync.flow.*:
+  type: config_entity
+  label: 'Flow config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    name:
+      type: label
+      label: 'Name'
+    sync_entities:
+      type: map
+      label: 'Sync entities'
+
+cms_content_sync.pool.*:
+  type: config_entity
+  label: 'CMS Content Sync Pool'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    backend_url:
+      type: uri
+      label: 'CMS Content Sync URL'
+    authentication_type:
+      type: string
+      label: 'Authentication Type'
+    site_id:
+      type: string
+      label: 'Site Identifier'
+
+action.configuration.node_cms_content_sync_export_action:
+  type: action_configuration_default
+  label: 'Push changes'

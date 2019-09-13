@@ -1,0 +1,86 @@
+{#
+/**
+ * @file
+ * Template file for the show usage modal.
+ */
+#}
+
+<h2>
+  {{ 'Failed exports'|trans }}
+</h2>
+
+<h3>{{ 'Hard failures'|trans }}</h3>
+{% if export_failures_hard.total %}
+  <div class="messages messages--error">
+  There were errors exporting {{ export_failures_hard.total }} entities:
+    <ul>
+      {% if export_failures_hard.request_failed %}
+        <li>{{ export_failures_hard.request_failed }} times the Sync Core couldn't be reached.</li>
+      {% endif %}
+      {% if export_failures_hard.internal_error %}
+        <li>{{ export_failures_hard.internal_error }} times the Drupal API threw an unexpected error.</li>
+      {% endif %}
+      {% if export_failures_hard.invalid_status_code %}
+        <li>{{ export_failures_hard.invalid_status_code }} times the Sync Core sent an unexpected (non-OK) response.</li>
+      {% endif %}
+      {% if export_failures_hard.dependency_export_failed %}
+        <li>{{ export_failures_hard.dependency_export_failed }} times the export of a referenced entity failed (see above).</li>
+      {% endif %}
+    </ul>
+  </div>
+{% else %}
+  <div class="messages messages--status">
+    No hard failures.
+  </div>
+{% endif %}
+
+<h3>{{ 'Soft failures'|trans }}</h3>
+{% if export_failures_soft.total %}
+  <div class="messages messages--warning">
+    The export of {{ export_failures_soft.total }} entities have been ignored as configured:
+    <ul>
+      {% if export_failures_soft.handler_denied %}
+        <li>{{ export_failures_soft.handler_denied }} times the handler was configured to explicitly ignore this entity (e.g. it's not published).</li>
+      {% endif %}
+      {% if export_failures_soft.unchanged %}
+        <li>{{ export_failures_soft.unchanged }} times the entity didn't change since it's last export.</li>
+      {% endif %}
+    </ul>
+    You can ignore this information unless you're trying to figure out why a specific entity has not been exported.
+  </div>
+{% else %}
+  <div class="messages messages--status">
+    No soft failures.
+  </div>
+{% endif %}
+
+
+<h2>
+  {{ 'Pending exports'|trans }}
+</h2>
+
+<h3>{{ 'Stale entities'|trans }}</h3>
+These are entities that should be automatically exported, but weren't exported yet with the "Push All" operation of the
+Flow after the initial configuration. So they existed before the Flow was created.
+{% if pending.stale_entities %}
+  <div class="messages messages--warning">
+    {{ pending.stale_entities }} entities are not exported yet. Please use the "Push All" operation of the Flow to export them.
+  </div>
+{% else %}
+  <div class="messages messages--status">
+    No stale entities.
+  </div>
+{% endif %}
+
+<h3>{{ 'Version changed'|trans }}</h3>
+The entity type of these entities has been changed, but they weren't exported yet with the changed fields.
+{% if pending.version_changed %}
+  <div class="messages messages--warning">
+    {{ pending.version_changed }} entities are not exported yet after their entity type changed.
+  </div>
+{% else %}
+  <div class="messages messages--status">
+    No entities with changed entity type definitions that require export.
+  </div>
+{% endif %}
+

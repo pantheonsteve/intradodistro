@@ -1,0 +1,4 @@
+/* Hide all elements from the form unless "override" checkbox is set. Toggled via JavaScript. */
+.cms-content-sync-edit-override-hide {
+  display: none !important;
+}

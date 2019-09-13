@@ -1,0 +1,137 @@
+{#
+/**
+ * @file
+ * Template file for the show usage modal.
+ */
+#}
+<h2>
+  {{ 'Sync Core'|trans }}
+</h2>
+
+{% for host, core in sync_cores %}
+  <h3>{{ host }}</h3>
+  {% if core %}
+    {% if newest_version == core.version %}
+      <div class="messages messages--status">Version up to date: {{ core.version }}</div>
+    {% elseif newest_version %}
+      <div class="messages messages--warning">Version outdated: {{ core.version }} (newest version is {{ newest_version }})</div>
+    {% else %}
+      <div class="messages messages--warning">Version: {{ core.version }} (newest version is unknown as the "update" module is disabled)</div>
+    {% endif %}
+
+    {% if core.error_log %}
+      <div class="messages messages--warning">
+        Error log from today:
+        <ul>
+          {% for msg in core.error_log %}
+            <li>{{ msg.time|format_date('html_time') }}: {{ msg.msg }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% elseif core.warning_log %}
+      <div class="messages messages--warning">
+        Warning log from today:
+        <ul>
+          {% for msg in core.warning_log %}
+            <li>{{ msg.time|format_date('html_time') }}: {{ msg.msg }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% else %}
+      <div class="messages messages--status">No error or warning messages.</div>
+    {% endif %}
+
+    <ul>
+      <li>Sites exported {{ core.runtime_usage.sumImport }} entities today ({{ core.runtime_usage.sumRootImport }} root entities)</li>
+      <li>Sites imported {{ core.runtime_usage.sumExport }} entities today ({{ core.runtime_usage.sumRootExport }} root entities)</li>
+    </ul>
+  {% else %}
+    <div class="messages messages--error">Offline</div>
+  {% endif %}
+{% endfor %}
+
+
+
+<br>
+<h2>
+  {{ 'Config issues'|trans }}
+</h2>
+
+<h3>{{ 'Local version differences'|trans }}</h3>
+{% if version_differences.local %}
+  <div class="messages messages--error">
+    The Flows of this site need to be updated:
+    <ul>
+      {% for msg in version_differences.local %}
+        <li>{{ msg }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% else %}
+  <div class="messages messages--status">
+    All Flows from your local site are up to date.
+  </div>
+{% endif %}
+
+<h3>{{ 'Remote version differences'|trans }}</h3>
+{% if version_differences.remote %}
+  <div class="messages messages--error">
+    The following sites use different entity type definitions than this site:
+    {{ version_differences.remote|raw }}
+  </div>
+{% else %}
+  <div class="messages messages--status">
+    All entity types from your local site are identical to the same entity types from all other connected sites.
+  </div>
+{% endif %}
+
+
+
+<br>
+<h2>
+  {{ 'Sync issues'|trans }}
+</h2>
+
+{% if export_failures_hard.total or import_failures_hard.total or error_log %}
+  <div class="messages messages--warning">
+    {% if export_failures_hard.total %}
+      <div>There were errors exporting {{ export_failures_hard.total }} entities: <a href="{{ url('entity.cms_content_sync.sync_health.export') }}">details</a>.</div>
+    {% endif %}
+
+    {% if import_failures_hard.total %}
+      <div>There were errors importing {{ export_failures_hard.total }} entities: <a href="{{ url('entity.cms_content_sync.sync_health.import') }}">details</a>.</div>
+    {% endif %}
+
+    {% if error_log %}
+      Last 10 Content Sync error messages:
+      <ul>
+        {% for msg in error_log %}
+          <li>{{ msg|raw }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+{% endif %}
+{% if warning_log or site_log_disabled %}
+  <div class="messages messages--warning">
+    {% if site_log_disabled %}
+      <div>The site log is disabled, so there's no report on log messages available.</div>
+    {% endif %}
+
+    {% if warning_log %}
+      Last 10 Content Sync warning messages:
+      <ul>
+        {% for msg in warning_log %}
+          <li>{{ msg|raw }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+{% endif %}
+{% if not export_failures_hard.total and not import_failures_hard.total and not error_log and not warning_log and not site_log_disabled %}
+  <div class="messages messages--status">
+    There were no errors exporting or importing entities on this site.
+  </div>
+{% endif %}
+
+
