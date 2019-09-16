@@ -33,6 +33,10 @@ class ComposerStaticInitDrupal8
         array (
             'phpDocumentor\\Reflection\\' => 25,
         ),
+        'c' => 
+        array (
+            'cweagans\\Composer\\' => 18,
+        ),
         'Z' => 
         array (
             'Zumba\\Mink\\Driver\\' => 18,
@@ -85,9 +89,19 @@ class ComposerStaticInitDrupal8
             'Psr\\Container\\' => 14,
             'Prophecy\\' => 9,
         ),
+        'O' => 
+        array (
+            'OomphInc\\ComposerInstallersExtender\\' => 36,
+        ),
         'M' => 
         array (
             'Masterminds\\' => 12,
+        ),
+        'L' => 
+        array (
+            'League\\OAuth2\\Server\\' => 21,
+            'League\\Event\\' => 13,
+            'Lcobucci\\JWT\\' => 13,
         ),
         'J' => 
         array (
@@ -107,6 +121,9 @@ class ComposerStaticInitDrupal8
         'D' => 
         array (
             'Drupal\\cms_content_sync\\' => 24,
+            'Drupal\\Tests\\lightning_layout\\' => 30,
+            'Drupal\\Tests\\lightning_core\\' => 28,
+            'Drupal\\Tests\\lightning_api\\' => 27,
             'Drupal\\Driver\\' => 14,
             'Drupal\\Core\\Composer\\' => 21,
             'Drupal\\Core\\' => 12,
@@ -134,6 +151,7 @@ class ComposerStaticInitDrupal8
             'Drupal\\Component\\Assertion\\' => 27,
             'Drupal\\Component\\Annotation\\' => 28,
             'Drupal\\Component\\' => 17,
+            'DrupalComposer\\DrupalScaffold\\' => 30,
             'Doctrine\\Instantiator\\' => 22,
             'Doctrine\\Common\\Lexer\\' => 22,
             'Doctrine\\Common\\Inflector\\' => 26,
@@ -166,6 +184,10 @@ class ComposerStaticInitDrupal8
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+        ),
+        'cweagans\\Composer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/cweagans/composer-patches/src',
         ),
         'Zumba\\Mink\\Driver\\' => 
         array (
@@ -315,9 +337,25 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy',
         ),
+        'OomphInc\\ComposerInstallersExtender\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src',
+        ),
         'Masterminds\\' => 
         array (
             0 => __DIR__ . '/..' . '/masterminds/html5/src',
+        ),
+        'League\\OAuth2\\Server\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/oauth2-server/src',
+        ),
+        'League\\Event\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/event/src',
+        ),
+        'Lcobucci\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
         ),
         'JsonSchema\\' => 
         array (
@@ -346,6 +384,18 @@ class ComposerStaticInitDrupal8
         'Drupal\\cms_content_sync\\' => 
         array (
             0 => __DIR__ . '/../..' . '/modules/contrib/cms_content_sync/src',
+        ),
+        'Drupal\\Tests\\lightning_layout\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/modules/contrib/lightning_layout/tests/src',
+        ),
+        'Drupal\\Tests\\lightning_core\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/modules/contrib/lightning_core/tests/src',
+        ),
+        'Drupal\\Tests\\lightning_api\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/modules/contrib/lightning_api/tests/src',
         ),
         'Drupal\\Driver\\' => 
         array (
@@ -455,6 +505,10 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/../..' . '/core/lib/Drupal/Component',
         ),
+        'DrupalComposer\\DrupalScaffold\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/drupal-composer/drupal-scaffold/src',
+        ),
         'Doctrine\\Instantiator\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
@@ -546,6 +600,10 @@ class ComposerStaticInitDrupal8
             array (
                 0 => __DIR__ . '/..' . '/stack/builder/src',
             ),
+            'Solarium\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/solarium/solarium/library',
+            ),
         ),
         'P' => 
         array (
@@ -597,6 +655,13 @@ class ComposerStaticInitDrupal8
     );
 
     public static $classMap = array (
+        'Acquia\\LightningExtension\\Context\\AwaitTrait' => __DIR__ . '/../..' . '/modules/contrib/lightning_core/tests/contexts/AwaitTrait.inc',
+        'Acquia\\LightningExtension\\Context\\CkEditorContext' => __DIR__ . '/../..' . '/modules/contrib/lightning_core/tests/contexts/CkEditorContext.behat.inc',
+        'Acquia\\LightningExtension\\Context\\DebugContext' => __DIR__ . '/../..' . '/modules/contrib/lightning_core/tests/contexts/DebugContext.behat.inc',
+        'Acquia\\LightningExtension\\Context\\ElementContext' => __DIR__ . '/../..' . '/modules/contrib/lightning_core/tests/contexts/ElementContext.behat.inc',
+        'Acquia\\LightningExtension\\Context\\EntityContext' => __DIR__ . '/../..' . '/modules/contrib/lightning_core/tests/contexts/EntityContext.behat.inc',
+        'Acquia\\LightningExtension\\Context\\TestModuleContext' => __DIR__ . '/../..' . '/modules/contrib/lightning_core/tests/contexts/TestModuleContext.behat.inc',
+        'Acquia\\LightningExtension\\Context\\ViewsContext' => __DIR__ . '/../..' . '/modules/contrib/lightning_core/tests/contexts/ViewsContext.behat.inc',
         'ArithmeticError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
         'AssertionError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
         'DivisionByZeroError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
@@ -607,6 +672,7 @@ class ComposerStaticInitDrupal8
         'Drupal\\Core\\DrupalKernel' => __DIR__ . '/../..' . '/core/lib/Drupal/Core/DrupalKernel.php',
         'Drupal\\Core\\DrupalKernelInterface' => __DIR__ . '/../..' . '/core/lib/Drupal/Core/DrupalKernelInterface.php',
         'Drupal\\Core\\Site\\Settings' => __DIR__ . '/../..' . '/core/lib/Drupal/Core/Site/Settings.php',
+        'Drupal\\lightning_api\\LightningApiServiceProvider' => __DIR__ . '/../..' . '/modules/contrib/lightning_api/src/LightningApiServiceProvider.php',
         'Error' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/Error.php',
         'File_Iterator' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Iterator.php',
         'File_Iterator_Facade' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Facade.php',
@@ -1161,6 +1227,7 @@ class ComposerStaticInitDrupal8
         'TheSeer\\Tokenizer\\Tokenizer' => __DIR__ . '/..' . '/theseer/tokenizer/src/Tokenizer.php',
         'TheSeer\\Tokenizer\\XMLSerializer' => __DIR__ . '/..' . '/theseer/tokenizer/src/XMLSerializer.php',
         'TypeError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
+        'WatchdogContext' => __DIR__ . '/../..' . '/modules/contrib/lightning_core/tests/contexts/WatchdogContext.behat.inc',
     );
 
     public static function getInitializer(ClassLoader $loader)

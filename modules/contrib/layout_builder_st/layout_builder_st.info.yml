@@ -1,0 +1,14 @@
+name: 'Layout Builder Symmetric Translations'
+type: module
+description: 'Allows translating Layout overrides'
+package: Layout Builder
+# core: 8.x
+dependencies:
+  - drupal:layout_builder
+  - drupal:system (>=8.7)
+
+# Information added by Drupal.org packaging script on 2019-06-14
+version: '8.x-1.0-alpha1'
+core: '8.x'
+project: 'layout_builder_st'
+datestamp: 1560544390

@@ -1,0 +1,1423 @@
+{
+    "definitions": {
+        "taxonomy_term--camelids": {
+            "title": "taxonomy_term:camelids Schema",
+            "description": "Describes the payload for 'taxonomy_term' entities of the 'camelids' bundle.",
+            "type": "object",
+            "required": [
+                "data"
+            ],
+            "properties": {
+                "data": {
+                    "description": "\\\"Resource objects\\\" appear in a JSON:API document to represent resources.",
+                    "type": "object",
+                    "required": [
+                        "type",
+                        "id"
+                    ],
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "title": "type",
+                            "description": "Resource type",
+                            "enum": [
+                                "taxonomy_term--camelids"
+                            ]
+                        },
+                        "id": {
+                            "type": "string",
+                            "title": "Resource ID",
+                            "format": "uuid",
+                            "maxLength": 128
+                        },
+                        "attributes": {
+                            "description": "Entity attributes",
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "drupal_internal__tid": {
+                                    "type": "integer",
+                                    "title": "Term ID",
+                                    "description": "The term ID."
+                                },
+                                "drupal_internal__revision_id": {
+                                    "type": "integer",
+                                    "title": "Revision ID"
+                                },
+                                "langcode": {
+                                    "type": "object",
+                                    "properties": {
+                                        "value": {
+                                            "type": "string",
+                                            "title": "Language code"
+                                        },
+                                        "language": {
+                                            "type": "language_reference",
+                                            "title": "Language object",
+                                            "description": "The referenced language"
+                                        }
+                                    },
+                                    "required": [
+                                        "value"
+                                    ],
+                                    "title": "Language",
+                                    "description": "The term language code."
+                                },
+                                "revision_created": {
+                                    "type": "number",
+                                    "title": "Revision create time",
+                                    "format": "utc-millisec",
+                                    "description": "The time that the current revision was created."
+                                },
+                                "revision_log_message": {
+                                    "type": "string",
+                                    "title": "Revision log message",
+                                    "description": "Briefly describe the changes you have made.",
+                                    "default": ""
+                                },
+                                "status": {
+                                    "type": "boolean",
+                                    "title": "Published",
+                                    "default": true
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "title": "Name",
+                                    "maxLength": 255
+                                },
+                                "description": {
+                                    "type": "object",
+                                    "properties": {
+                                        "value": {
+                                            "type": "string",
+                                            "title": "Text"
+                                        },
+                                        "format": {
+                                            "type": "string",
+                                            "title": "Text format"
+                                        }
+                                    },
+                                    "required": [
+                                        "value"
+                                    ],
+                                    "title": "Description"
+                                },
+                                "weight": {
+                                    "type": "integer",
+                                    "title": "Weight",
+                                    "description": "The weight of this term in relation to other terms.",
+                                    "default": 0
+                                },
+                                "changed": {
+                                    "type": "number",
+                                    "title": "Changed",
+                                    "format": "utc-millisec",
+                                    "description": "The time that the term was last edited."
+                                },
+                                "default_langcode": {
+                                    "type": "boolean",
+                                    "title": "Default translation",
+                                    "description": "A flag indicating whether this is the default translation.",
+                                    "default": true
+                                },
+                                "revision_default": {
+                                    "type": "boolean",
+                                    "title": "Default revision",
+                                    "description": "A flag indicating whether this was a default revision when it was saved."
+                                },
+                                "revision_translation_affected": {
+                                    "type": "boolean",
+                                    "title": "Revision translation affected",
+                                    "description": "Indicates if the last edit of a translation belongs to current revision."
+                                },
+                                "field_test_taxonomy_term": {
+                                    "type": "object",
+                                    "properties": {
+                                        "value": {
+                                            "type": "string",
+                                            "title": "Text",
+                                            "maxLength": 255
+                                        },
+                                        "format": {
+                                            "type": "string",
+                                            "title": "Text format"
+                                        }
+                                    },
+                                    "required": [
+                                        "value"
+                                    ],
+                                    "title": "Test field"
+                                }
+                            },
+                            "required": [
+                                "drupal_internal__tid",
+                                "drupal_internal__revision_id",
+                                "name",
+                                "revision_translation_affected"
+                            ]
+                        },
+                        "relationships": {
+                            "description": "Entity relationships",
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "vid": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "type",
+                                                "id"
+                                            ],
+                                            "properties": {
+                                                "type": {
+                                                    "type": "string",
+                                                    "title": "Referenced resource",
+                                                    "enum": [
+                                                        "taxonomy_vocabulary--taxonomy_vocabulary"
+                                                    ]
+                                                },
+                                                "id": {
+                                                    "type": "string",
+                                                    "title": "Resource ID",
+                                                    "format": "uuid",
+                                                    "maxLength": 128
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "title": "Vocabulary"
+                                },
+                                "revision_user": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "type",
+                                                "id"
+                                            ],
+                                            "properties": {
+                                                "type": {
+                                                    "type": "string",
+                                                    "title": "Referenced resource",
+                                                    "enum": [
+                                                        "user--user"
+                                                    ]
+                                                },
+                                                "id": {
+                                                    "type": "string",
+                                                    "title": "Resource ID",
+                                                    "format": "uuid",
+                                                    "maxLength": 128
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "title": "Revision user"
+                                },
+                                "parent": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "type",
+                                                    "id"
+                                                ],
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string",
+                                                        "title": "Referenced resource",
+                                                        "enum": [
+                                                            "taxonomy_term--camelids"
+                                                        ]
+                                                    },
+                                                    "id": {
+                                                        "type": "string",
+                                                        "title": "Resource ID",
+                                                        "format": "uuid",
+                                                        "maxLength": 128
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "title": "Term Parents"
+                                }
+                            }
+                        },
+                        "links": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object . ",
+                                "type": "object",
+                                "required": [
+                                    "href"
+                                ],
+                                "properties": {
+                                    "href": {
+                                        "description": "A string containing the link's URL . ",
+                                        "type": "string",
+                                        "format": "uri - reference"
+                                    },
+                                    "meta": {
+                                        "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                        "type": "object",
+                                        "additionalProperties": true
+                                    }
+                                }
+                            }
+                        },
+                        "meta": {
+                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "meta": {
+                    "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "links": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object . ",
+                        "type": "object",
+                        "required": [
+                            "href"
+                        ],
+                        "properties": {
+                            "href": {
+                                "description": "A string containing the link's URL . ",
+                                "type": "string",
+                                "format": "uri - reference"
+                            },
+                            "meta": {
+                                "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        }
+                    }
+                },
+                "jsonapi": {
+                    "description": "An object describing the server's implementation",
+                    "type": "object",
+                    "properties": {
+                        "version": {
+                            "type": "string"
+                        },
+                        "meta": {
+                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "paths": {
+        "\/taxonomy_term\/camelids": {
+            "get": {
+                "summary": "List (Taxonomy term - camelids)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Collection endpoint<\/a><\/em> for the taxonomy_term--camelids resource type. Collections are a list of <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource objects<\/a><\/em> for a particular resource type. In the JSON API module for Drupal all collections are homogeneous, which means that all the items in a collection are of the same type.",
+                "parameters": [
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "type": "array",
+                        "required": false,
+                        "description": "The JSON:API module has some of the most robust and feature-rich filtering features around. All of that power comes with a bit of a learning curve though. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/filtering\">Learn more in the documentation<\/a>."
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "type": "array",
+                        "required": false,
+                        "description": "The JSON:API module allows you to sort collections based on properties in the resource or in nested resources. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/sorting\">Learn more in the documentation<\/a>."
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "type": "array",
+                        "required": false,
+                        "description": "Pagination can be a deceptively complex topic. It's easy to fall into traps and not follow best-practices. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/pagination\">Learn more in the documentation<\/a>."
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "type": "string",
+                        "required": false,
+                        "description": "Embed related entities in the response. For example: use a query string like <code>?include=comments.author<\/code> to include all the entities referenced by <code>comments<\/code> and all the entities referenced by <code>author<\/code> on those entities!. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/includes\">Learn more in the documentation<\/a>."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "title": "taxonomy_term:camelids Schema",
+                            "description": "Describes the payload for 'taxonomy_term' entities of the 'camelids' bundle.",
+                            "type": "object",
+                            "required": [
+                                "data"
+                            ],
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#\/definitions\/taxonomy_term--camelids\/properties\/data"
+                                    }
+                                },
+                                "meta": {
+                                    "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                    "type": "object",
+                                    "additionalProperties": true
+                                },
+                                "links": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object . ",
+                                        "type": "object",
+                                        "required": [
+                                            "href"
+                                        ],
+                                        "properties": {
+                                            "href": {
+                                                "description": "A string containing the link's URL . ",
+                                                "type": "string",
+                                                "format": "uri - reference"
+                                            },
+                                            "meta": {
+                                                "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                                "type": "object",
+                                                "additionalProperties": true
+                                            }
+                                        }
+                                    }
+                                },
+                                "jsonapi": {
+                                    "description": "An object describing the server's implementation",
+                                    "type": "object",
+                                    "properties": {
+                                        "version": {
+                                            "type": "string"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create (Taxonomy term - camelids)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The <em class=\"placeholder\">taxonomy_term<\/em> object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#\/definitions\/taxonomy_term--camelids"
+                        }
+                    }
+                ],
+                "responses": []
+            }
+        },
+        "\/taxonomy_term\/camelids\/{entity}": {
+            "get": {
+                "summary": "View (Taxonomy term - camelids)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Individual endpoint<\/a><\/em> for the taxonomy_term--camelids resource type. The individual endpoint contains a <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource object<\/a><\/em> with the data for a particular resource or entity.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#\/definitions\/taxonomy_term--camelids"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Remove (Taxonomy term - camelids)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Entity deleted"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Update (Taxonomy term - camelids)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The <em class=\"placeholder\">taxonomy_term<\/em> object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#\/definitions\/taxonomy_term--camelids"
+                        }
+                    }
+                ],
+                "responses": []
+            }
+        },
+        "\/taxonomy_term\/camelids\/{entity}\/parent": {
+            "get": {
+                "summary": "Related: parent (Taxonomy term - camelids)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Related endpoint<\/a><\/em> for the taxonomy_term--camelids resource type through the <em class=\"placeholder\">parent<\/em> relationship. The related endpoint contains a <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource object<\/a><\/em> with the data for a particular related resource or entity.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "title": "taxonomy_term:camelids Schema",
+                            "description": "Describes the payload for 'taxonomy_term' entities of the 'camelids' bundle.",
+                            "type": "object",
+                            "required": [
+                                "data"
+                            ],
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#\/definitions\/taxonomy_term--camelids\/properties\/data"
+                                    }
+                                },
+                                "meta": {
+                                    "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                    "type": "object",
+                                    "additionalProperties": true
+                                },
+                                "links": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object . ",
+                                        "type": "object",
+                                        "required": [
+                                            "href"
+                                        ],
+                                        "properties": {
+                                            "href": {
+                                                "description": "A string containing the link's URL . ",
+                                                "type": "string",
+                                                "format": "uri - reference"
+                                            },
+                                            "meta": {
+                                                "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                                "type": "object",
+                                                "additionalProperties": true
+                                            }
+                                        }
+                                    }
+                                },
+                                "jsonapi": {
+                                    "description": "An object describing the server's implementation",
+                                    "type": "object",
+                                    "properties": {
+                                        "version": {
+                                            "type": "string"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "\/taxonomy_term\/camelids\/{entity}\/relationships\/parent": {
+            "delete": {
+                "summary": "Relationship: parent (Taxonomy term - camelids)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Relationship: parent (Taxonomy term - camelids)",
+                "description": "<em class=\"placeholder\"><a href=\"https:\/\/jsonapi.org\/format\/#fetching-relationships\">Relationship endpoint<\/a><\/em> for the taxonomy_term--camelids resource type through the <em class=\"placeholder\">parent<\/em> relationship. The relationship endpoint contains a <em class=\"placeholder\"><a href=\"https:\/\/jsonapi.org\/format\/#document-resource-identifier-objects\">resource identifier object<\/a><\/em> with the data for a particular relationship.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "An array of objects each containing \\\"type\\\" and \\\"id\\\" members for to-many relationships.",
+                                    "type": "array",
+                                    "items": {
+                                        "description": "The \"type\" and \"id\" to non-empty members.",
+                                        "type": "object",
+                                        "required": [
+                                            "type",
+                                            "id"
+                                        ],
+                                        "properties": {
+                                            "type": {
+                                                "title": "Resource type name",
+                                                "type": "string",
+                                                "enum": [
+                                                    "taxonomy_term--camelids"
+                                                ]
+                                            },
+                                            "id": {
+                                                "title": "Resource ID",
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "meta": {
+                                                "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                                "type": "object",
+                                                "additionalProperties": true,
+                                                "properties": []
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    },
+                                    "uniqueItems": true
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Relationship: parent (Taxonomy term - camelids)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The resource identifier object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "An array of objects each containing \\\"type\\\" and \\\"id\\\" members for to-many relationships.",
+                                    "type": "array",
+                                    "items": {
+                                        "description": "The \"type\" and \"id\" to non-empty members.",
+                                        "type": "object",
+                                        "required": [
+                                            "type",
+                                            "id"
+                                        ],
+                                        "properties": {
+                                            "type": {
+                                                "title": "Resource type name",
+                                                "type": "string",
+                                                "enum": [
+                                                    "taxonomy_term--camelids"
+                                                ]
+                                            },
+                                            "id": {
+                                                "title": "Resource ID",
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "meta": {
+                                                "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                                "type": "object",
+                                                "additionalProperties": true,
+                                                "properties": []
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    },
+                                    "uniqueItems": true
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "An array of objects each containing \\\"type\\\" and \\\"id\\\" members for to-many relationships.",
+                                    "type": "array",
+                                    "items": {
+                                        "description": "The \"type\" and \"id\" to non-empty members.",
+                                        "type": "object",
+                                        "required": [
+                                            "type",
+                                            "id"
+                                        ],
+                                        "properties": {
+                                            "type": {
+                                                "title": "Resource type name",
+                                                "type": "string",
+                                                "enum": [
+                                                    "taxonomy_term--camelids"
+                                                ]
+                                            },
+                                            "id": {
+                                                "title": "Resource ID",
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "meta": {
+                                                "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                                "type": "object",
+                                                "additionalProperties": true,
+                                                "properties": []
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    },
+                                    "uniqueItems": true
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Relationship: parent (Taxonomy term - camelids)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The resource identifier object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "An array of objects each containing \\\"type\\\" and \\\"id\\\" members for to-many relationships.",
+                                    "type": "array",
+                                    "items": {
+                                        "description": "The \"type\" and \"id\" to non-empty members.",
+                                        "type": "object",
+                                        "required": [
+                                            "type",
+                                            "id"
+                                        ],
+                                        "properties": {
+                                            "type": {
+                                                "title": "Resource type name",
+                                                "type": "string",
+                                                "enum": [
+                                                    "taxonomy_term--camelids"
+                                                ]
+                                            },
+                                            "id": {
+                                                "title": "Resource ID",
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "meta": {
+                                                "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                                "type": "object",
+                                                "additionalProperties": true,
+                                                "properties": []
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    },
+                                    "uniqueItems": true
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "An array of objects each containing \\\"type\\\" and \\\"id\\\" members for to-many relationships.",
+                                    "type": "array",
+                                    "items": {
+                                        "description": "The \"type\" and \"id\" to non-empty members.",
+                                        "type": "object",
+                                        "required": [
+                                            "type",
+                                            "id"
+                                        ],
+                                        "properties": {
+                                            "type": {
+                                                "title": "Resource type name",
+                                                "type": "string",
+                                                "enum": [
+                                                    "taxonomy_term--camelids"
+                                                ]
+                                            },
+                                            "id": {
+                                                "title": "Resource ID",
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "meta": {
+                                                "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                                "type": "object",
+                                                "additionalProperties": true,
+                                                "properties": []
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    },
+                                    "uniqueItems": true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "\/taxonomy_term\/camelids\/{entity}\/revision_user": {
+            "get": {
+                "summary": "Related: revision_user (User)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Related endpoint<\/a><\/em> for the user--user resource type through the <em class=\"placeholder\">revision_user<\/em> relationship. The related endpoint contains a <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource object<\/a><\/em> with the data for a particular related resource or entity.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "\/taxonomy_term\/camelids\/{entity}\/relationships\/revision_user": {
+            "delete": {
+                "summary": "Relationship: revision_user (User)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Relationship: revision_user (User)",
+                "description": "<em class=\"placeholder\"><a href=\"https:\/\/jsonapi.org\/format\/#fetching-relationships\">Relationship endpoint<\/a><\/em> for the user--user resource type through the <em class=\"placeholder\">revision_user<\/em> relationship. The relationship endpoint contains a <em class=\"placeholder\"><a href=\"https:\/\/jsonapi.org\/format\/#document-resource-identifier-objects\">resource identifier object<\/a><\/em> with the data for a particular relationship.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "user--user"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Relationship: revision_user (User)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The resource identifier object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "user--user"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "user--user"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Relationship: revision_user (User)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The resource identifier object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "user--user"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "user--user"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "\/taxonomy_term\/camelids\/{entity}\/vid": {
+            "get": {
+                "summary": "Related: vid (Taxonomy vocabulary)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Related endpoint<\/a><\/em> for the taxonomy_vocabulary--taxonomy_vocabulary resource type through the <em class=\"placeholder\">vid<\/em> relationship. The related endpoint contains a <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource object<\/a><\/em> with the data for a particular related resource or entity.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "\/taxonomy_term\/camelids\/{entity}\/relationships\/vid": {
+            "delete": {
+                "summary": "Relationship: vid (Taxonomy vocabulary)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Relationship: vid (Taxonomy vocabulary)",
+                "description": "<em class=\"placeholder\"><a href=\"https:\/\/jsonapi.org\/format\/#fetching-relationships\">Relationship endpoint<\/a><\/em> for the taxonomy_vocabulary--taxonomy_vocabulary resource type through the <em class=\"placeholder\">vid<\/em> relationship. The relationship endpoint contains a <em class=\"placeholder\"><a href=\"https:\/\/jsonapi.org\/format\/#document-resource-identifier-objects\">resource identifier object<\/a><\/em> with the data for a particular relationship.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "taxonomy_vocabulary--taxonomy_vocabulary"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Relationship: vid (Taxonomy vocabulary)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The resource identifier object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "taxonomy_vocabulary--taxonomy_vocabulary"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "taxonomy_vocabulary--taxonomy_vocabulary"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Relationship: vid (Taxonomy vocabulary)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the taxonomy_term camelids"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The resource identifier object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "taxonomy_vocabulary--taxonomy_vocabulary"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "taxonomy_vocabulary--taxonomy_vocabulary"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

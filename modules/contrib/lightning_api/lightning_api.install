@@ -1,0 +1,135 @@
+<?php
+
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Url;
+use Drupal\views\Entity\View;
+
+/**
+ * Implements hook_install().
+ */
+function lightning_api_install() {
+  $module_handler = \Drupal::moduleHandler();
+
+  // If the openapi_ui_redoc and jsonapi modules are installed, give the API
+  // documentation a nice path alias.
+  if ($module_handler->moduleExists('openapi_ui_redoc') && $module_handler->moduleExists('jsonapi')) {
+    /** @var \Drupal\Core\Path\AliasStorageInterface $alias_storage */
+    $alias_storage = \Drupal::service('path.alias_storage');
+
+    $path = $alias_storage->lookupPathSource(
+      '/api-docs',
+      LanguageInterface::LANGCODE_NOT_SPECIFIED
+    );
+    if (empty($path)) {
+      $route_parameters = [
+        'openapi_ui' => 'redoc',
+        'openapi_generator' => 'jsonapi',
+      ];
+      $alias_storage->save(
+        Url::fromRoute('openapi.documentation', $route_parameters)->toString(),
+        '/api-docs'
+      );
+    }
+  }
+
+  // Disable the content view's 'Include destination' switch.
+  if (!\Drupal::isConfigSyncing()) {
+    lightning_api_update_8301();
+  }
+}
+
+/**
+ * Sets a default value for lightning_api.settings:bundle_docs.
+ */
+function lightning_api_update_8001() {
+  \Drupal::configFactory()
+    ->getEditable('lightning_api.settings')
+    ->set('bundle_docs', TRUE)
+    ->save();
+}
+
+/**
+ * Installs the Consumers module.
+ */
+function lightning_api_update_8002() {
+  \Drupal::service('module_installer')->install(['consumers']);
+}
+
+/**
+ * Installs the new versions of 'ReDoc for OpenAPI UI' and
+ * 'Swagger UI for OpenAPI UI' modules, and removes the old ones.
+ *
+ * This is needed, because the corresponding openapi update hook only installs
+ * them if the old versions are enabled.
+ *
+ * @see openapi_update_8100
+ */
+function lightning_api_update_8300() {
+  /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
+  $module_installer = \Drupal::service('module_installer');
+  $uninstalled = $module_installer->uninstall([
+    'openapi_redoc',
+    'openapi_swagger_ui',
+  ]);
+
+  // If the uninstall failed -- for example, the openapi_redoc and
+  // openapi_swagger_ui modules were physically unavailable, as they would be if
+  // they were brought in by Composer back when they were all part of the
+  // openapi project before beta2 -- we need to forcibly remove them from the
+  // core.extension config so that they are actually uninstalled.
+  if (!$uninstalled) {
+    \Drupal::configFactory()
+      ->getEditable('core.extension')
+      ->clear('module.openapi_redoc')
+      ->clear('module.openapi_swagger_ui')
+      ->save();
+
+    Drupal::keyValue('system.schema')->deleteMultiple([
+      'openapi_redoc',
+      'openapi_swagger_ui',
+    ]);
+  }
+
+  $module_installer->install([
+    'openapi_ui_swagger',
+    'openapi_ui_redoc',
+  ]);
+}
+
+/**
+ * Changes the 'Content' view's 'Operations' field's 'Include destination'
+ * setting to FALSE.
+ *
+ * @see lightning_api_view_presave()
+ */
+function lightning_api_update_8301() {
+  if (! Drupal::moduleHandler()->moduleExists('views')) {
+    return;
+  }
+
+  $view = View::load('content');
+  if ($view) {
+    lightning_api_view_presave($view->enforceIsNew());
+    $view->enforceIsNew(FALSE)->save();
+  }
+}
+
+/**
+ * Installs Lightning Core.
+ */
+function lightning_api_update_8302() {
+  Drupal::service('module_installer')->install(['lightning_core']);
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function lightning_api_update_dependencies() {
+  return [
+    'lightning_api' => [
+      8300 => [
+        'openapi' => 8100,
+      ],
+    ],
+  ];
+}

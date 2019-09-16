@@ -1,0 +1,5 @@
+lightning_layout.settings:
+  title: 'Layout'
+  description: 'Configure Lightning Layout settings.'
+  parent: lightning_core.settings
+  route_name: lightning_layout.settings

@@ -1,0 +1,5 @@
+{
+    "name": "drupal/lightning_banner_block",
+    "type": "drupal-module",
+    "description": "Provides a block type which contains a single large image and optional link."
+}

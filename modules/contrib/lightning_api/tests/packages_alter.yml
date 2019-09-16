@@ -1,0 +1,7 @@
+---
+# For unknown reasons, Composer occasionally resolves Lightning Layout to 2.0.0-alpha12, which
+# breaks due to (since-resolved) patch conflicts. This should "encourage" Composer to prefer
+# a more stable tag by default.
+drupal/lightning_layout:
+  version: '*@stable'
+  version_dev: '1.x-dev || 2.x-dev'

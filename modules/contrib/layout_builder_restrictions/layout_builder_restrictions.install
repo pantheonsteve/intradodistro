@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update functions for Layout Builder Restrictions.
+ */
+
+/**
+ * Move third-party settings.
+ */
+function layout_builder_restrictions_update_8201(&$sandbox) {
+  // When upgrading from 8.x-1.x to 8.x-2.x, it is necessary to move existing
+  // entity_view_mode_restriction configuration to its own namespace.
+  $config_factory = \Drupal::configFactory();
+
+  if (!isset($sandbox['count'])) {
+    $sandbox['ids'] = $config_factory->listAll('core.entity_view_display.');
+    $sandbox['count'] = count($sandbox['ids']);
+  }
+
+  $ids = array_splice($sandbox['ids'], 0, 50);
+  foreach ($ids as $id) {
+    $display = $config_factory->getEditable($id);
+    if ($display->get('third_party_settings.layout_builder_restrictions')) {
+      $settings = $display->get('third_party_settings.layout_builder_restrictions');
+      $display
+        ->clear('third_party_settings.layout_builder_restrictions')
+        ->set('third_party_settings.layout_builder_restrictions.entity_view_mode_restriction', $settings)
+        ->save();
+    }
+  }
+
+  $sandbox['#finished'] = empty($sandbox['ids']) ? 1 : ($sandbox['count'] - count($sandbox['ids'])) / $sandbox['count'];
+}

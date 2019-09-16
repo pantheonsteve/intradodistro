@@ -1,0 +1,16 @@
+{
+    "name": "drupal/acquia_connector",
+    "description": "Allows Drupal websites to connect with Acquia.",
+    "type": "drupal-module",
+    "license": "GPL-2.0+",
+    "repositories": {
+    "drupal": {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  },
+    "require": {
+        "drupal/search_api": "^1.8",
+        "drupal/search_api_solr": "^1.2"
+    }
+}

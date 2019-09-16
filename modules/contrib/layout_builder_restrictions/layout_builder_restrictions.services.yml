@@ -1,0 +1,13 @@
+services:
+  layout_builder_restrictions.event_subscriber:
+    class: Drupal\layout_builder_restrictions\EventSubscriber\LayoutBuilderRestrictionsSubscriber
+    arguments: ['@current_route_match', '@module_handler']
+    tags:
+      - { name: event_subscriber }
+  plugin.manager.layout_builder_restriction:
+    class: Drupal\layout_builder_restrictions\Plugin\LayoutBuilderRestrictionManager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@config.factory']
+  layout_builder_restrictions.route_subscriber:
+    class: Drupal\layout_builder_restrictions\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }

@@ -1,0 +1,25 @@
+{
+    "name": "drupol/bg_image_formatter",
+    "description": "This module provides an image formatter that allows you to set an image in background of a container.",
+    "type": "drupal-module",
+    "license": "GPL-2.0+",
+    "homepage": "https://drupal.org/project/bg_image_formatter",
+    "authors": [
+        {
+            "name": "Pol Dellaiera (@drupol)",
+            "homepage": "https://www.drupal.org/u/pol",
+            "role": "Maintainer"
+        }
+    ],
+    "require-dev": {
+        "drupol/drupal-conventions": "^1"
+    },
+    "scripts": {
+        "grumphp": "./vendor/bin/grumphp run"
+    },
+    "extra": {
+        "grumphp": {
+            "config-default-path": "vendor/drupol/drupal-conventions/config/drupal8/grumphp.yml"
+        }
+    }
+}

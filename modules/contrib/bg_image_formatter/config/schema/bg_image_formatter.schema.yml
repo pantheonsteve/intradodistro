@@ -1,0 +1,50 @@
+field.formatter.settings.bg_image_formatter:
+  type: mapping
+  label: 'Background image formatter settings'
+  mapping:
+    image_style:
+      type: string
+      label: 'The image style to use for the background image'
+    css_settings:
+      type: mapping
+      label: 'CSS settings'
+      mapping:
+        bg_image_selector:
+          type: string
+          label: 'Selector'
+        bg_image_z_index:
+          type: string
+          label: 'Z-index'
+        bg_image_color:
+          type: string
+          label: 'Color'
+        bg_image_x:
+          type: string
+          label: 'X coordinate'
+        bg_image_y:
+          type: string
+          label: 'Y coordinate'
+        bg_image_attachment:
+          type: string
+          label: 'Attachment'
+        bg_image_repeat:
+          type: string
+          label: 'Repeat'
+        bg_image_background_size:
+          type: string
+          label: 'Background size'
+        bg_image_media_query:
+          type: string
+          label: 'Media query'
+        bg_image_important:
+          type: integer
+          label: 'Important'
+        bg_image_background_size_ie8:
+          type: integer
+          label: 'IE8 filters enabled?'
+        bg_image_path_format:
+          type: string
+          label: 'Image path format'
+        bg_image_gradient:
+          type: string
+          label: 'Image gradient'

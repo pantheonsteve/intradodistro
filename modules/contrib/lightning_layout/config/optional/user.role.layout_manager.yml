@@ -1,0 +1,12 @@
+id: layout_manager
+label: 'Layout manager'
+weight: 2
+langcode: en
+is_admin: false
+permissions:
+  - administer node display
+  - configure any layout
+dependencies:
+  module:
+    - lightning_roles
+    - node

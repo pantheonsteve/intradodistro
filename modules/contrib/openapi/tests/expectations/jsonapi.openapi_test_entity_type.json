@@ -1,0 +1,65 @@
+{
+    "paths": {
+        "\/openapi_test_entity_type\/openapi_test_entity_type": {
+            "get": {
+                "summary": "List (OpenApi Test Entity type)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Collection endpoint<\/a><\/em> for the openapi_test_entity_type--openapi_test_entity_type resource type. Collections are a list of <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource objects<\/a><\/em> for a particular resource type. In the JSON API module for Drupal all collections are homogeneous, which means that all the items in a collection are of the same type.",
+                "parameters": [
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "type": "array",
+                        "required": false,
+                        "description": "The JSON:API module has some of the most robust and feature-rich filtering features around. All of that power comes with a bit of a learning curve though. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/filtering\">Learn more in the documentation<\/a>."
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "type": "array",
+                        "required": false,
+                        "description": "The JSON:API module allows you to sort collections based on properties in the resource or in nested resources. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/sorting\">Learn more in the documentation<\/a>."
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "type": "array",
+                        "required": false,
+                        "description": "Pagination can be a deceptively complex topic. It's easy to fall into traps and not follow best-practices. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/pagination\">Learn more in the documentation<\/a>."
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "type": "string",
+                        "required": false,
+                        "description": "Embed related entities in the response. For example: use a query string like <code>?include=comments.author<\/code> to include all the entities referenced by <code>comments<\/code> and all the entities referenced by <code>author<\/code> on those entities!. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/includes\">Learn more in the documentation<\/a>."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "\/openapi_test_entity_type\/openapi_test_entity_type\/{entity}": {
+            "get": {
+                "summary": "View (OpenApi Test Entity type)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Individual endpoint<\/a><\/em> for the openapi_test_entity_type--openapi_test_entity_type resource type. The individual endpoint contains a <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource object<\/a><\/em> with the data for a particular resource or entity.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity_type openapi_test_entity_type"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        }
+    }
+}

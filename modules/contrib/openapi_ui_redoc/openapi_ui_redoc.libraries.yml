@@ -1,0 +1,13 @@
+# Include Redoc Library
+redoc:
+  js:
+    'https://rebilly.github.io/ReDoc/releases/latest/redoc.min.js': {}
+
+# Include source to load a redoc ui from spec object instead of url.
+redoc_attr:
+  js:
+    'js/redoc.js': {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - openapi_ui_redoc/redoc

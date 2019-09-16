@@ -1,0 +1,3 @@
+field.formatter.settings.responsive_bg_image_formatter:
+  type: field.formatter.settings.bg_image_formatter
+  label: 'Responsive Background image formatter settings'

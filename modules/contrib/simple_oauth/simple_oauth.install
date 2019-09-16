@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Installation and updating routines.
+ */
+
+/**
+ * Define the default batch size.
+ */
+function simple_oauth_update_8001() {
+  \Drupal::configFactory()
+    ->getEditable('simple_oauth.settings')
+    ->set('token_cron_batch_size', 0)
+    ->save();
+}

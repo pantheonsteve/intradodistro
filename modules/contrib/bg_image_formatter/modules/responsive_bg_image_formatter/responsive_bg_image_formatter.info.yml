@@ -1,0 +1,13 @@
+name: 'Responsive Background Images Formatter'
+description: 'Responsive Background Images Formatter provides an image formatter to display images responsively in element backgrounds using CSS.'
+# core: 8.x
+type: module
+dependencies:
+  - bg_image_formatter:bg_image_formatter
+  - drupal:responsive_image
+
+# Information added by Drupal.org packaging script on 2019-08-02
+version: '8.x-1.11'
+core: '8.x'
+project: 'bg_image_formatter'
+datestamp: 1564773197

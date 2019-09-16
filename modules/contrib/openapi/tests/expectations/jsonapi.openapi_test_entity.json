@@ -1,0 +1,1276 @@
+{
+    "definitions": {
+        "openapi_test_entity--camelids": {
+            "title": "openapi_test_entity:camelids Schema",
+            "description": "Describes the payload for 'openapi_test_entity' entities of the 'camelids' bundle.",
+            "type": "object",
+            "required": [
+                "data"
+            ],
+            "properties": {
+                "data": {
+                    "description": "\\\"Resource objects\\\" appear in a JSON:API document to represent resources.",
+                    "type": "object",
+                    "required": [
+                        "type",
+                        "id"
+                    ],
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "title": "type",
+                            "description": "Resource type",
+                            "enum": [
+                                "openapi_test_entity--camelids"
+                            ]
+                        },
+                        "id": {
+                            "type": "string",
+                            "title": "Resource ID",
+                            "format": "uuid",
+                            "maxLength": 128
+                        },
+                        "attributes": {
+                            "description": "Entity attributes",
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "drupal_internal__id": {
+                                    "type": "integer",
+                                    "title": "ID"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "title": "Name",
+                                    "maxLength": 50,
+                                    "description": "The name of the OpenApi Test Entity entity.",
+                                    "default": ""
+                                },
+                                "field_test_openapi_test_entity": {
+                                    "type": "object",
+                                    "properties": {
+                                        "value": {
+                                            "type": "string",
+                                            "title": "Text",
+                                            "maxLength": 255
+                                        },
+                                        "format": {
+                                            "type": "string",
+                                            "title": "Text format"
+                                        }
+                                    },
+                                    "required": [
+                                        "value"
+                                    ],
+                                    "title": "Test field"
+                                }
+                            },
+                            "required": [
+                                "drupal_internal__id"
+                            ]
+                        },
+                        "relationships": {
+                            "description": "Entity relationships",
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "openapi_test_entity_type": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "type",
+                                                "id"
+                                            ],
+                                            "properties": {
+                                                "type": {
+                                                    "type": "string",
+                                                    "title": "Referenced resource",
+                                                    "enum": [
+                                                        "openapi_test_entity_type--openapi_test_entity_type"
+                                                    ]
+                                                },
+                                                "id": {
+                                                    "type": "string",
+                                                    "title": "Resource ID",
+                                                    "format": "uuid",
+                                                    "maxLength": 128
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "title": "OpenApi Test Entity type"
+                                }
+                            }
+                        },
+                        "links": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object . ",
+                                "type": "object",
+                                "required": [
+                                    "href"
+                                ],
+                                "properties": {
+                                    "href": {
+                                        "description": "A string containing the link's URL . ",
+                                        "type": "string",
+                                        "format": "uri - reference"
+                                    },
+                                    "meta": {
+                                        "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                        "type": "object",
+                                        "additionalProperties": true
+                                    }
+                                }
+                            }
+                        },
+                        "meta": {
+                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "meta": {
+                    "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "links": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object . ",
+                        "type": "object",
+                        "required": [
+                            "href"
+                        ],
+                        "properties": {
+                            "href": {
+                                "description": "A string containing the link's URL . ",
+                                "type": "string",
+                                "format": "uri - reference"
+                            },
+                            "meta": {
+                                "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        }
+                    }
+                },
+                "jsonapi": {
+                    "description": "An object describing the server's implementation",
+                    "type": "object",
+                    "properties": {
+                        "version": {
+                            "type": "string"
+                        },
+                        "meta": {
+                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": true
+        },
+        "openapi_test_entity--openapi_test_entity_test": {
+            "title": "openapi_test_entity:openapi_test_entity_test Schema",
+            "description": "Describes the payload for 'openapi_test_entity' entities of the 'openapi_test_entity_test' bundle.",
+            "type": "object",
+            "required": [
+                "data"
+            ],
+            "properties": {
+                "data": {
+                    "description": "\\\"Resource objects\\\" appear in a JSON:API document to represent resources.",
+                    "type": "object",
+                    "required": [
+                        "type",
+                        "id"
+                    ],
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "title": "type",
+                            "description": "Resource type",
+                            "enum": [
+                                "openapi_test_entity--openapi_test_entity_test"
+                            ]
+                        },
+                        "id": {
+                            "type": "string",
+                            "title": "Resource ID",
+                            "format": "uuid",
+                            "maxLength": 128
+                        },
+                        "attributes": {
+                            "description": "Entity attributes",
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "drupal_internal__id": {
+                                    "type": "integer",
+                                    "title": "ID"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "title": "Name",
+                                    "maxLength": 50,
+                                    "description": "The name of the OpenApi Test Entity entity.",
+                                    "default": ""
+                                },
+                                "field_test_openapi_test_entity": {
+                                    "type": "object",
+                                    "properties": {
+                                        "value": {
+                                            "type": "string",
+                                            "title": "Text",
+                                            "maxLength": 255
+                                        },
+                                        "format": {
+                                            "type": "string",
+                                            "title": "Text format"
+                                        }
+                                    },
+                                    "required": [
+                                        "value"
+                                    ],
+                                    "title": "Test field"
+                                }
+                            },
+                            "required": [
+                                "drupal_internal__id"
+                            ]
+                        },
+                        "relationships": {
+                            "description": "Entity relationships",
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "openapi_test_entity_type": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "type",
+                                                "id"
+                                            ],
+                                            "properties": {
+                                                "type": {
+                                                    "type": "string",
+                                                    "title": "Referenced resource",
+                                                    "enum": [
+                                                        "openapi_test_entity_type--openapi_test_entity_type"
+                                                    ]
+                                                },
+                                                "id": {
+                                                    "type": "string",
+                                                    "title": "Resource ID",
+                                                    "format": "uuid",
+                                                    "maxLength": 128
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "title": "OpenApi Test Entity type"
+                                }
+                            }
+                        },
+                        "links": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object . ",
+                                "type": "object",
+                                "required": [
+                                    "href"
+                                ],
+                                "properties": {
+                                    "href": {
+                                        "description": "A string containing the link's URL . ",
+                                        "type": "string",
+                                        "format": "uri - reference"
+                                    },
+                                    "meta": {
+                                        "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                        "type": "object",
+                                        "additionalProperties": true
+                                    }
+                                }
+                            }
+                        },
+                        "meta": {
+                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "meta": {
+                    "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "links": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object . ",
+                        "type": "object",
+                        "required": [
+                            "href"
+                        ],
+                        "properties": {
+                            "href": {
+                                "description": "A string containing the link's URL . ",
+                                "type": "string",
+                                "format": "uri - reference"
+                            },
+                            "meta": {
+                                "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        }
+                    }
+                },
+                "jsonapi": {
+                    "description": "An object describing the server's implementation",
+                    "type": "object",
+                    "properties": {
+                        "version": {
+                            "type": "string"
+                        },
+                        "meta": {
+                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "paths": {
+        "\/openapi_test_entity\/camelids": {
+            "get": {
+                "summary": "List (OpenApi Test Entity - camelids)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Collection endpoint<\/a><\/em> for the openapi_test_entity--camelids resource type. Collections are a list of <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource objects<\/a><\/em> for a particular resource type. In the JSON API module for Drupal all collections are homogeneous, which means that all the items in a collection are of the same type.",
+                "parameters": [
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "type": "array",
+                        "required": false,
+                        "description": "The JSON:API module has some of the most robust and feature-rich filtering features around. All of that power comes with a bit of a learning curve though. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/filtering\">Learn more in the documentation<\/a>."
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "type": "array",
+                        "required": false,
+                        "description": "The JSON:API module allows you to sort collections based on properties in the resource or in nested resources. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/sorting\">Learn more in the documentation<\/a>."
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "type": "array",
+                        "required": false,
+                        "description": "Pagination can be a deceptively complex topic. It's easy to fall into traps and not follow best-practices. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/pagination\">Learn more in the documentation<\/a>."
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "type": "string",
+                        "required": false,
+                        "description": "Embed related entities in the response. For example: use a query string like <code>?include=comments.author<\/code> to include all the entities referenced by <code>comments<\/code> and all the entities referenced by <code>author<\/code> on those entities!. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/includes\">Learn more in the documentation<\/a>."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "title": "openapi_test_entity:camelids Schema",
+                            "description": "Describes the payload for 'openapi_test_entity' entities of the 'camelids' bundle.",
+                            "type": "object",
+                            "required": [
+                                "data"
+                            ],
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#\/definitions\/openapi_test_entity--camelids\/properties\/data"
+                                    }
+                                },
+                                "meta": {
+                                    "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                    "type": "object",
+                                    "additionalProperties": true
+                                },
+                                "links": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object . ",
+                                        "type": "object",
+                                        "required": [
+                                            "href"
+                                        ],
+                                        "properties": {
+                                            "href": {
+                                                "description": "A string containing the link's URL . ",
+                                                "type": "string",
+                                                "format": "uri - reference"
+                                            },
+                                            "meta": {
+                                                "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                                "type": "object",
+                                                "additionalProperties": true
+                                            }
+                                        }
+                                    }
+                                },
+                                "jsonapi": {
+                                    "description": "An object describing the server's implementation",
+                                    "type": "object",
+                                    "properties": {
+                                        "version": {
+                                            "type": "string"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create (OpenApi Test Entity - camelids)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The <em class=\"placeholder\">openapi_test_entity<\/em> object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#\/definitions\/openapi_test_entity--camelids"
+                        }
+                    }
+                ],
+                "responses": []
+            }
+        },
+        "\/openapi_test_entity\/camelids\/{entity}": {
+            "get": {
+                "summary": "View (OpenApi Test Entity - camelids)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Individual endpoint<\/a><\/em> for the openapi_test_entity--camelids resource type. The individual endpoint contains a <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource object<\/a><\/em> with the data for a particular resource or entity.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity camelids"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#\/definitions\/openapi_test_entity--camelids"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Remove (OpenApi Test Entity - camelids)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity camelids"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Entity deleted"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Update (OpenApi Test Entity - camelids)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity camelids"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The <em class=\"placeholder\">openapi_test_entity<\/em> object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#\/definitions\/openapi_test_entity--camelids"
+                        }
+                    }
+                ],
+                "responses": []
+            }
+        },
+        "\/openapi_test_entity\/camelids\/{entity}\/openapi_test_entity_type": {
+            "get": {
+                "summary": "Related: openapi_test_entity_type (OpenApi Test Entity type)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Related endpoint<\/a><\/em> for the openapi_test_entity_type--openapi_test_entity_type resource type through the <em class=\"placeholder\">openapi_test_entity_type<\/em> relationship. The related endpoint contains a <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource object<\/a><\/em> with the data for a particular related resource or entity.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity camelids"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "\/openapi_test_entity\/camelids\/{entity}\/relationships\/openapi_test_entity_type": {
+            "delete": {
+                "summary": "Relationship: openapi_test_entity_type (OpenApi Test Entity type)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity camelids"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Relationship: openapi_test_entity_type (OpenApi Test Entity type)",
+                "description": "<em class=\"placeholder\"><a href=\"https:\/\/jsonapi.org\/format\/#fetching-relationships\">Relationship endpoint<\/a><\/em> for the openapi_test_entity_type--openapi_test_entity_type resource type through the <em class=\"placeholder\">openapi_test_entity_type<\/em> relationship. The relationship endpoint contains a <em class=\"placeholder\"><a href=\"https:\/\/jsonapi.org\/format\/#document-resource-identifier-objects\">resource identifier object<\/a><\/em> with the data for a particular relationship.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity camelids"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "openapi_test_entity_type--openapi_test_entity_type"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Relationship: openapi_test_entity_type (OpenApi Test Entity type)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity camelids"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The resource identifier object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "openapi_test_entity_type--openapi_test_entity_type"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "openapi_test_entity_type--openapi_test_entity_type"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Relationship: openapi_test_entity_type (OpenApi Test Entity type)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity camelids"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The resource identifier object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "openapi_test_entity_type--openapi_test_entity_type"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "openapi_test_entity_type--openapi_test_entity_type"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "\/openapi_test_entity\/openapi_test_entity_test": {
+            "get": {
+                "summary": "List (OpenApi Test Entity - openapi_test_entity_test)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Collection endpoint<\/a><\/em> for the openapi_test_entity--openapi_test_entity_test resource type. Collections are a list of <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource objects<\/a><\/em> for a particular resource type. In the JSON API module for Drupal all collections are homogeneous, which means that all the items in a collection are of the same type.",
+                "parameters": [
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "type": "array",
+                        "required": false,
+                        "description": "The JSON:API module has some of the most robust and feature-rich filtering features around. All of that power comes with a bit of a learning curve though. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/filtering\">Learn more in the documentation<\/a>."
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "type": "array",
+                        "required": false,
+                        "description": "The JSON:API module allows you to sort collections based on properties in the resource or in nested resources. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/sorting\">Learn more in the documentation<\/a>."
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "type": "array",
+                        "required": false,
+                        "description": "Pagination can be a deceptively complex topic. It's easy to fall into traps and not follow best-practices. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/pagination\">Learn more in the documentation<\/a>."
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "type": "string",
+                        "required": false,
+                        "description": "Embed related entities in the response. For example: use a query string like <code>?include=comments.author<\/code> to include all the entities referenced by <code>comments<\/code> and all the entities referenced by <code>author<\/code> on those entities!. <a href=\"https:\/\/www.drupal.org\/docs\/8\/modules\/jsonapi\/includes\">Learn more in the documentation<\/a>."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "title": "openapi_test_entity:openapi_test_entity_test Schema",
+                            "description": "Describes the payload for 'openapi_test_entity' entities of the 'openapi_test_entity_test' bundle.",
+                            "type": "object",
+                            "required": [
+                                "data"
+                            ],
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#\/definitions\/openapi_test_entity--openapi_test_entity_test\/properties\/data"
+                                    }
+                                },
+                                "meta": {
+                                    "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                    "type": "object",
+                                    "additionalProperties": true
+                                },
+                                "links": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object . ",
+                                        "type": "object",
+                                        "required": [
+                                            "href"
+                                        ],
+                                        "properties": {
+                                            "href": {
+                                                "description": "A string containing the link's URL . ",
+                                                "type": "string",
+                                                "format": "uri - reference"
+                                            },
+                                            "meta": {
+                                                "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                                "type": "object",
+                                                "additionalProperties": true
+                                            }
+                                        }
+                                    }
+                                },
+                                "jsonapi": {
+                                    "description": "An object describing the server's implementation",
+                                    "type": "object",
+                                    "properties": {
+                                        "version": {
+                                            "type": "string"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create (OpenApi Test Entity - openapi_test_entity_test)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The <em class=\"placeholder\">openapi_test_entity<\/em> object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#\/definitions\/openapi_test_entity--openapi_test_entity_test"
+                        }
+                    }
+                ],
+                "responses": []
+            }
+        },
+        "\/openapi_test_entity\/openapi_test_entity_test\/{entity}": {
+            "get": {
+                "summary": "View (OpenApi Test Entity - openapi_test_entity_test)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Individual endpoint<\/a><\/em> for the openapi_test_entity--openapi_test_entity_test resource type. The individual endpoint contains a <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource object<\/a><\/em> with the data for a particular resource or entity.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity openapi_test_entity_test"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#\/definitions\/openapi_test_entity--openapi_test_entity_test"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Remove (OpenApi Test Entity - openapi_test_entity_test)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity openapi_test_entity_test"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Entity deleted"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Update (OpenApi Test Entity - openapi_test_entity_test)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity openapi_test_entity_test"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The <em class=\"placeholder\">openapi_test_entity<\/em> object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#\/definitions\/openapi_test_entity--openapi_test_entity_test"
+                        }
+                    }
+                ],
+                "responses": []
+            }
+        },
+        "\/openapi_test_entity\/openapi_test_entity_test\/{entity}\/openapi_test_entity_type": {
+            "get": {
+                "summary": "Related: openapi_test_entity_type (OpenApi Test Entity type)",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Related endpoint<\/a><\/em> for the openapi_test_entity_type--openapi_test_entity_type resource type through the <em class=\"placeholder\">openapi_test_entity_type<\/em> relationship. The related endpoint contains a <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource object<\/a><\/em> with the data for a particular related resource or entity.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity openapi_test_entity_test"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "\/openapi_test_entity\/openapi_test_entity_test\/{entity}\/relationships\/openapi_test_entity_type": {
+            "delete": {
+                "summary": "Relationship: openapi_test_entity_type (OpenApi Test Entity type)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity openapi_test_entity_test"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Relationship: openapi_test_entity_type (OpenApi Test Entity type)",
+                "description": "<em class=\"placeholder\"><a href=\"https:\/\/jsonapi.org\/format\/#fetching-relationships\">Relationship endpoint<\/a><\/em> for the openapi_test_entity_type--openapi_test_entity_type resource type through the <em class=\"placeholder\">openapi_test_entity_type<\/em> relationship. The relationship endpoint contains a <em class=\"placeholder\"><a href=\"https:\/\/jsonapi.org\/format\/#document-resource-identifier-objects\">resource identifier object<\/a><\/em> with the data for a particular relationship.",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity openapi_test_entity_test"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "openapi_test_entity_type--openapi_test_entity_type"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Relationship: openapi_test_entity_type (OpenApi Test Entity type)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity openapi_test_entity_test"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The resource identifier object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "openapi_test_entity_type--openapi_test_entity_type"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "openapi_test_entity_type--openapi_test_entity_type"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Relationship: openapi_test_entity_type (OpenApi Test Entity type)",
+                "description": null,
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "in": "path",
+                        "type": "uuid",
+                        "description": "The uuid of the openapi_test_entity openapi_test_entity_test"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The resource identifier object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "openapi_test_entity_type--openapi_test_entity_type"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "description": "The \"type\" and \"id\" to non-empty members.",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "id"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "title": "Resource type name",
+                                            "type": "string",
+                                            "enum": [
+                                                "openapi_test_entity_type--openapi_test_entity_type"
+                                            ]
+                                        },
+                                        "id": {
+                                            "title": "Resource ID",
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "meta": {
+                                            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+                                            "type": "object",
+                                            "additionalProperties": true,
+                                            "properties": []
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

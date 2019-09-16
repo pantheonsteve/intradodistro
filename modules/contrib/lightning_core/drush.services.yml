@@ -1,0 +1,12 @@
+services:
+  lightning_core.hooks:
+    class: '\Drupal\lightning_core\Commands\Hooks'
+    tags:
+      - { name: drush.command }
+
+  lightning_core.commands:
+    class: \Drupal\lightning_core\Commands\LightningCoreCommands
+    arguments:
+      - '@lightning.update_manager'
+    tags:
+      - { name: drush.command }

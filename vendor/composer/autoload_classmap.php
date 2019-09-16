@@ -6,6 +6,13 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Acquia\\LightningExtension\\Context\\AwaitTrait' => $baseDir . '/modules/contrib/lightning_core/tests/contexts/AwaitTrait.inc',
+    'Acquia\\LightningExtension\\Context\\CkEditorContext' => $baseDir . '/modules/contrib/lightning_core/tests/contexts/CkEditorContext.behat.inc',
+    'Acquia\\LightningExtension\\Context\\DebugContext' => $baseDir . '/modules/contrib/lightning_core/tests/contexts/DebugContext.behat.inc',
+    'Acquia\\LightningExtension\\Context\\ElementContext' => $baseDir . '/modules/contrib/lightning_core/tests/contexts/ElementContext.behat.inc',
+    'Acquia\\LightningExtension\\Context\\EntityContext' => $baseDir . '/modules/contrib/lightning_core/tests/contexts/EntityContext.behat.inc',
+    'Acquia\\LightningExtension\\Context\\TestModuleContext' => $baseDir . '/modules/contrib/lightning_core/tests/contexts/TestModuleContext.behat.inc',
+    'Acquia\\LightningExtension\\Context\\ViewsContext' => $baseDir . '/modules/contrib/lightning_core/tests/contexts/ViewsContext.behat.inc',
     'ArithmeticError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
     'AssertionError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
     'DivisionByZeroError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
@@ -16,6 +23,7 @@ return array(
     'Drupal\\Core\\DrupalKernel' => $baseDir . '/core/lib/Drupal/Core/DrupalKernel.php',
     'Drupal\\Core\\DrupalKernelInterface' => $baseDir . '/core/lib/Drupal/Core/DrupalKernelInterface.php',
     'Drupal\\Core\\Site\\Settings' => $baseDir . '/core/lib/Drupal/Core/Site/Settings.php',
+    'Drupal\\lightning_api\\LightningApiServiceProvider' => $baseDir . '/modules/contrib/lightning_api/src/LightningApiServiceProvider.php',
     'Error' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/Error.php',
     'File_Iterator' => $vendorDir . '/phpunit/php-file-iterator/src/Iterator.php',
     'File_Iterator_Facade' => $vendorDir . '/phpunit/php-file-iterator/src/Facade.php',
@@ -570,4 +578,5 @@ return array(
     'TheSeer\\Tokenizer\\Tokenizer' => $vendorDir . '/theseer/tokenizer/src/Tokenizer.php',
     'TheSeer\\Tokenizer\\XMLSerializer' => $vendorDir . '/theseer/tokenizer/src/XMLSerializer.php',
     'TypeError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
+    'WatchdogContext' => $baseDir . '/modules/contrib/lightning_core/tests/contexts/WatchdogContext.behat.inc',
 );

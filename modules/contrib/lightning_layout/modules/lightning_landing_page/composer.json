@@ -1,0 +1,5 @@
+{
+    "name": "drupal/lightning_landing_page",
+    "type": "drupal-module",
+    "description": "Provides a content type which allows you to build free-form one-off landing pages."
+}

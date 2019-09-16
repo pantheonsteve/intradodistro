@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: google_map
+label: 'Google Map'
+revision: 0
+description: 'Displays a Google map.'

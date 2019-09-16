@@ -1,0 +1,34 @@
+# This file is used by Acquia Pipelines continuous integration. It builds
+version: 1.1.0
+services:
+  - mysql
+  - php:
+      version: 7.1
+
+events:
+  build:
+    steps:
+      - setup:
+          type: script
+          script:
+            # Add Composer's local bin directory to the PATH so that we will be
+            # running our installed versions of Drush, PHPCS, Behat, etc.
+            - export PATH="$HOME/.composer/vendor/bin:$SOURCE_DIR/vendor/bin:$PATH"
+            - composer validate --no-check-all --ansi --no-interaction
+            - composer install
+      - install:
+          type: script
+          script:
+            # Install and create settings.php file.
+            - cd $SOURCE_DIR
+            - mysql -u root -proot -e 'CREATE DATABASE drupal;'
+            - DB_URL=mysql://root:root@localhost/drupal ./install-drupal.sh
+      - cleanup:
+          type: script
+          script:
+            - cd $SOURCE_DIR
+            # Remove the Drush binary and package so it doesn't interfere with
+            # cloud versions. Doing this the proper way with Composer can cause
+            # timeouts.
+            - rm ./vendor/bin/drush
+            - rm -rf ./vendor/drush

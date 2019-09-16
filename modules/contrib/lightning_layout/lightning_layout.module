@@ -1,0 +1,221 @@
+<?php
+
+/**
+ * @file
+ * Contains layout functionality for Lightning.
+ */
+
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\Core\Extension\Extension;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\block_content\BlockContentInterface;
+
+/**
+ * Implements hook_modules_installed().
+ */
+function lightning_layout_modules_installed(array $modules) {
+  // Don't do anything during config sync.
+  if (Drupal::isConfigSyncing()) {
+    return;
+  }
+
+  if (in_array('lightning_roles', $modules, TRUE)) {
+    Drupal::service('lightning.content_roles')->grantPermissions('creator', [
+      'configure any layout',
+    ]);
+  }
+
+  // Install Entity Browser Block if Lightning Media is enabled so that the
+  // Media Library Entity Browser is available from the Layout Builder.
+  if (in_array('lightning_media', $modules, TRUE)) {
+    Drupal::service('module_installer')->install(['entity_browser_block']);
+  }
+}
+
+/**
+ * Implements hook_block_content_delete().
+ */
+function lightning_layout_block_content_delete(BlockContentInterface $block_content) {
+  Drupal::service('block_content.uuid_lookup')->delete($block_content->uuid());
+}
+
+/**
+ * Implements hook_block_alter().
+ */
+function lightning_layout_block_alter(array &$blocks) {
+  $allow = Drupal::config('lightning_layout.settings')->get('entity_blocks');
+
+  // Suppress all entity_block derivatives for entity types that are not
+  // explicitly allowed.
+  $plugins = preg_grep('/^entity_block:/', array_keys($blocks));
+  foreach ($plugins as $plugin_id) {
+    if (!in_array(substr($plugin_id, 13), $allow)) {
+      unset($blocks[$plugin_id]);
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function lightning_layout_form_entity_view_display_edit_form_alter(array &$form, FormStateInterface $form_state) {
+  $form['#process'][] = 'lightning_layout_tweak_layout_builder_ui';
+}
+
+/**
+ * Tweaks the Layout Builder stuff on an entity view display form.
+ *
+ * @param array $element
+ *   The form element containing Layout Builder's entity view display options.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current form state.
+ *
+ * @return array
+ *   The processed element.
+ */
+function lightning_layout_tweak_layout_builder_ui(array $element, FormStateInterface $form_state) {
+  /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display */
+  $display = $form_state->getFormObject()->getEntity();
+
+  $layout_builder_enabled = $display->getThirdPartySetting('layout_builder', 'enable', FALSE);
+
+  // Check if this display is for an internal view mode.
+  $view_mode = EntityViewMode::load($display->getTargetEntityTypeId() . '.' . $display->getMode());
+  if ($view_mode) {
+    $internal = $view_mode->getThirdPartySetting('lightning_core', 'internal');
+    if ($internal) {
+      // If it's not already applied, don't allow Layout Builder.
+      $element['layout']['#access'] = $layout_builder_enabled;
+
+      // Inform the user what's up.
+      Drupal::messenger()->addWarning(t('This display is internal and will not be seen by normal users.'));
+    }
+  }
+
+  return $element;
+}
+
+/**
+ * Implements template_preprocess_block().
+ */
+function lightning_layout_preprocess_block(array &$variables) {
+  if ($variables['base_plugin_id'] === 'inline_block') {
+    /** @var \Drupal\block_content\BlockContentInterface $block_content */
+    $block_content = $variables['content']['#block_content'];
+    $variables['attributes']['data-inline-block-uuid'] = $block_content->uuid();
+  }
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function lightning_layout_field_widget_form_alter(&$element, FormStateInterface &$form_state, $context) {
+  $items = isset($context['items']) ? $context['items'] : NULL;
+
+  // Hide the Layout field's select widget if it only has the default "none"
+  // option.
+  if ($items instanceof EntityReferenceFieldItemListInterface && $items->getName() === 'layout_selection' && isset($element['#type']) && $element['#type'] === 'select' && count($element['#options']) === 1) {
+    $element['#access'] = FALSE;
+  }
+}
+
+/**
+ * Returns the entity view display associated with a bundle and view mode.
+ *
+ * This is an exact copy of the deprecated entity_get_display() from Core 8.6.x
+ *  except for one change: the default value of the $view_mode parameter.
+ *
+ * @todo Eliminate this in favor of
+ *   Drupal::service('entity_display.repository')->getViewDisplay() in Core
+ *   8.8.x once that is the lowest supported version.
+ *
+ * @param string $entity_type
+ *   The entity type.
+ * @param string $bundle
+ *   The bundle.
+ * @param string $view_mode
+ *   The view mode, or 'default' to retrieve the 'default' display object for
+ *   this bundle.
+ *
+ * @return \Drupal\Core\Entity\Display\EntityViewDisplayInterface
+ *   The entity view display associated with the view mode.
+ *
+ * @see \Drupal\Core\Entity\EntityStorageInterface::create()
+ * @see \Drupal\Core\Entity\EntityStorageInterface::load()
+ */
+function lightning_layout_entity_get_display($entity_type, $bundle, $view_mode = 'default') {
+  // Try loading the display from configuration.
+  $display = EntityViewDisplay::load($entity_type . '.' . $bundle . '.' . $view_mode);
+
+  // If not found, create a fresh display object. We do not preemptively create
+  // new entity_view_display configuration entries for each existing entity type
+  // and bundle whenever a new view mode becomes available. Instead,
+  // configuration entries are only created when a display object is explicitly
+  // configured and saved.
+  if (!$display) {
+    $display = EntityViewDisplay::create([
+      'targetEntityType' => $entity_type,
+      'bundle' => $bundle,
+      'mode' => $view_mode,
+      'status' => TRUE,
+    ]);
+  }
+
+  return $display;
+}
+
+/**
+ * Returns the entity form display associated with a bundle and form mode.
+ *
+ * This is an exact copy of the deprecated entity_get_form_display() from Core
+ * 8.6.x except for one change: the default value of the $form_mode parameter.
+ *
+ * @todo Eliminate this in favor of
+ *   Drupal::service('entity_display.repository')->getFormDisplay() in Core
+ *   8.8.x once that is the lowest supported version.
+ *
+ * @param string $entity_type
+ *   The entity type.
+ * @param string $bundle
+ *   The bundle.
+ * @param string $form_mode
+ *   The form mode.
+ *
+ * @return \Drupal\Core\Entity\Display\EntityFormDisplayInterface
+ *   The entity form display associated with the given form mode.
+ *
+ * @see \Drupal\Core\Entity\EntityStorageInterface::create()
+ * @see \Drupal\Core\Entity\EntityStorageInterface::load()
+ */
+function lightning_layout_entity_get_form_display($entity_type, $bundle, $form_mode = 'default') {
+  // Try loading the entity from configuration.
+  $entity_form_display = EntityFormDisplay::load($entity_type . '.' . $bundle . '.' . $form_mode);
+
+  // If not found, create a fresh entity object. We do not preemptively create
+  // new entity form display configuration entries for each existing entity type
+  // and bundle whenever a new form mode becomes available. Instead,
+  // configuration entries are only created when an entity form display is
+  // explicitly configured and saved.
+  if (!$entity_form_display) {
+    $entity_form_display = EntityFormDisplay::create([
+      'targetEntityType' => $entity_type,
+      'bundle' => $bundle,
+      'mode' => $form_mode,
+      'status' => TRUE,
+    ]);
+  }
+
+  return $entity_form_display;
+}
+
+/**
+ * Implements hook_system_info_alter().
+ */
+function lightning_layout_system_info_alter(array &$info, Extension $file, $type) {
+  if ($file->getName() === 'layout_builder_st') {
+    $info['hidden'] = TRUE;
+  }
+}

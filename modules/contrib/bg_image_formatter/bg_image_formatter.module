@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Main module file.
+ */
+
+declare(strict_types = 1);
+
+use Drupal\Core\Ajax\AddCssCommand;
+
+/**
+ * Implements hook_ajax_render_alter().
+ */
+function bg_image_formatter_ajax_render_alter(array &$data) {
+  foreach ($data as &$command_data) {
+    if ($command_data['command'] === 'settings' && isset($command_data['settings']['bg_image_formatter_css'])) {
+      foreach ($command_data['settings']['bg_image_formatter_css'] as $style_tag) {
+        $data[] = (new AddCssCommand($style_tag))->render();
+      }
+      unset($command_data['settings']['bg_image_formatter_css']);
+    }
+  }
+}

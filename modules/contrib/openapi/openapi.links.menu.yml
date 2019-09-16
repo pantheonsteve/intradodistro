@@ -1,0 +1,5 @@
+openapi.downloads:
+  title: OpenAPI
+  description: 'Available OpenAPI Documentation.'
+  parent: system.admin_config_services
+  route_name: openapi.downloads

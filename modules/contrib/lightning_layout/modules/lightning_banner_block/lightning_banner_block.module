@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Contains hook implementations for Lightning Banner Block.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function lightning_banner_block_form_block_form_alter(array &$form, FormStateInterface $form_state) {
+  /** @var \Drupal\block\BlockForm $form_object */
+  $form_object = $form_state->getFormObject();
+  /** @var \Drupal\block\BlockInterface $block */
+  $block = $form_object->getEntity();
+  /** @var \Drupal\Core\Block\BlockPluginInterface $plugin */
+  $plugin = $block->getPlugin();
+
+  if ($block->isNew() && $plugin->getBaseId() === 'block_content') {
+    $block_content = Drupal::entityTypeManager()
+      ->getStorage('block_content')
+      ->loadByProperties([
+        'uuid' => $plugin->getDerivativeId(),
+      ]);
+
+    if ($block_content && reset($block_content)->bundle() === 'banner') {
+      $form['settings']['label_display']['#default_value'] = FALSE;
+    }
+  }
+}

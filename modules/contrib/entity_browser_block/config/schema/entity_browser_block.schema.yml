@@ -1,0 +1,16 @@
+block.settings.entity_browser_block:*:
+  type: block_settings
+  label: 'Entity Browser block'
+  mapping:
+    entity_ids:
+      type: sequence
+      label: 'Entity IDs'
+      sequence:
+        type: string
+        label: 'Entity ID'
+    view_modes:
+      type: sequence
+      label: 'View modes'
+      sequence:
+        type: string
+        label: 'View mode'

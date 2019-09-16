@@ -1,0 +1,40 @@
+openapi.download:
+  path: '/openapi/{openapi_generator}'
+  defaults:
+    _title: 'OpenAPI Schema Download'
+    _title_callback: 'Drupal\openapi\Controller\ApiSpecificationController::title'
+    _controller: '\Drupal\openapi\Controller\ApiSpecificationController::getSpecification'
+  methods:
+    - GET
+  requirements:
+    _permission: 'access openapi api docs'
+    _format: 'json'
+  options:
+    parameters:
+      openapi_generator:
+        type: openapi_generator
+openapi.downloads:
+  path: '/admin/config/services/openapi'
+  defaults:
+    _controller: '\Drupal\openapi\Controller\OpenApiListController::downloadsList'
+    _title: 'OpenAPI Resources'
+  methods:
+    - GET
+  requirements:
+    _permission: 'access openapi api docs'
+openapi.documentation:
+  path: '/admin/config/services/openapi/{openapi_ui}/{openapi_generator}'
+  defaults:
+    _title: 'OpenAPI Documentation'
+    _controller: '\Drupal\openapi\Controller\OpenApiUiController::generate'
+  methods:
+    - GET
+  requirements:
+    _permission: 'access openapi api docs'
+    _module_dependencies: 'openapi_ui'
+  options:
+    parameters:
+      openapi_ui:
+        type: openapi_ui
+      openapi_generator:
+        type: openapi_generator
