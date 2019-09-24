@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the image_effects module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function image_effects_requirements($phase) {
+  $requirements = [];
+
+  // Check PHP GD2 FreeType support.
+  if (function_exists('gd_info')) {
+    $info = gd_info();
+    if (!function_exists('imagettftext') || !isset($info["FreeType Support"])) {
+      // No FreeType support, raise warning.
+      $requirements['image_effects_gd_freetype'] = [
+        'title' => t('GD library FreeType support'),
+        'value' => t('Not installed'),
+        'severity' => REQUIREMENT_WARNING,
+        'description' => t('The GD Library for PHP is enabled, but was compiled without FreeType support. Image effects using fonts will not be available with the GD image toolkit.'),
+      ];
+    }
+  }
+
+  return $requirements;
+}
+
+/**
+ * Minimum 1.x schema version to allow upgrading from.
+ */
+function image_effects_update_last_removed() {
+  return 8004;
+}
+
+/**
+ * Enable file_mdm module and required submodules.
+ */
+function image_effects_update_8201() {
+  \Drupal::service('module_installer')->install([
+    'file_mdm',
+    'file_mdm_exif',
+    'file_mdm_font',
+  ]);
+}
+
+/**
+ * Clear caches to discover new effects.
+ */
+function image_effects_update_8202() {
+  // Empty function.
+}
+
+/**
+ * Clear caches to discover new effects.
+ */
+function image_effects_update_8203() {
+  // Empty function.
+}
