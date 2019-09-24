@@ -15,7 +15,8 @@
         "drupal/bootstrap_barrio": "^4.22",
         "drupal/devel": "^2.1",
         "drupal/panels": "^4.4",
-        "drupal/panelizer": "^4.1"
+        "drupal/panelizer": "^4.1",
+        "drupal/layout_builder_restrictions": "^2.2"
     },
     "replace": {
         "drupal/core": "^8.7"
