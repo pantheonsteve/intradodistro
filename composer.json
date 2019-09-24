@@ -9,7 +9,9 @@
         "drupal/cms_content_sync": "^1.22",
         "drupal/admin_toolbar": "^1.27",
         "drupal/lightning_layout": "^2.1",
-        "drupal/lightning_api": "^4.2"
+        "drupal/lightning_api": "^4.2",
+        "drupal/bootstrap": "^3.20",
+        "drupal/bootstrap_layouts": "^5.1"
     },
     "replace": {
         "drupal/core": "^8.7"
