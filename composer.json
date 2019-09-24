@@ -13,7 +13,9 @@
         "drupal/bootstrap": "^3.20",
         "drupal/bootstrap_layouts": "^5.1",
         "drupal/bootstrap_barrio": "^4.22",
-        "drupal/devel": "^2.1"
+        "drupal/devel": "^2.1",
+        "drupal/panels": "^4.4",
+        "drupal/panelizer": "^4.1"
     },
     "replace": {
         "drupal/core": "^8.7"
