@@ -400,7 +400,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     $record['layout']['settings']['attributes'] = '';
     $record['layout']['settings']['link_attribute'] = FALSE;
     $record['layout']['settings']['link_custom'] = '';
-    $fields = _ds_sort_fields((array) $form_state->getValue('fields'), 'weight');
+    $fields = _ds_sort_fields($form_state->getValue('fields'), 'weight');
     foreach ($fields as $field_key => $field) {
 
       // Ignore new fieldgroup, new field or existing field.
@@ -427,7 +427,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   elseif (!empty($layout)) {
     $save_display = TRUE;
 
-    $fields = _ds_sort_fields((array) $form_state->getValue('fields'), 'weight');
+    $fields = _ds_sort_fields($form_state->getValue('fields'), 'weight');
 
     foreach ($fields as $key => $field) {
       // Make sure to hide hidden fields.
@@ -1103,49 +1103,6 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, array &$form, Fo
   $field_settings = $form['#ds_layout']['fields'];
   $form['#field_settings'] = $field_settings;
 
-  if (empty($form['fields'])) {
-    // EntityDisplayFormBase Doesn't add the fields table and field_ui library
-    // when there are no fields.  Since DS needs those, we add them.
-    $form['#attached']['library'][] = 'field_ui/drupal.field_ui';
-    $form['fields'] = [
-      '#type' => 'field_ui_table',
-      '#weight' => -101,
-      '#header' => [
-        t('Field'),
-        t('Weight'),
-        t('Parent'),
-        t('Region'),
-        t('Label'),
-        ['data' => t('Format'), 'colspan' => 3],
-      ],
-      '#regions' => [],
-      '#attributes' => [
-        'class' => ['field-ui-overview'],
-        'id' => 'field-display-overview',
-      ],
-      '#tabledrag' => [
-        [
-          'action' => 'order',
-          'relationship' => 'sibling',
-          'group' => 'field-weight',
-        ],
-        [
-          'action' => 'match',
-          'relationship' => 'parent',
-          'group' => 'field-parent',
-          'subgroup' => 'field-parent',
-          'source' => 'field-name',
-        ],
-        [
-          'action' => 'match',
-          'relationship' => 'parent',
-          'group' => 'field-region',
-          'subgroup' => 'field-region',
-          'source' => 'field-name',
-        ],
-      ],
-    ];
-  }
   $table = &$form['fields'];
   $form['#ds_fields'] = [];
 
@@ -1461,7 +1418,6 @@ function ds_field_row_form_format_summary_construct(&$table, $key, FormStateInte
  */
 function _ds_sort_fields(array $a, $subkey) {
   $c = [];
-  $b = [];
   foreach ($a as $k => $v) {
     if (isset($v[$subkey])) {
       $b[$k] = $v[$subkey];
