@@ -2,4 +2,14 @@
  * @file
  * Subtheme specific CSS.
  */
+ .container-fluid {
+    width: 100%;
+    /* padding-right: 15px; */
+    /* padding-left: 15px; */
+    margin-right: auto;
+    margin-left: auto;
+}
 
+.heroblock {
+  margin-top: 15px;
+}
