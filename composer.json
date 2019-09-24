@@ -17,7 +17,8 @@
         "drupal/panels": "^4.4",
         "drupal/panelizer": "^4.1",
         "drupal/layout_builder_restrictions": "^2.2",
-        "drupal/ds": "^3.4"
+        "drupal/ds": "^3.4",
+        "drupal/adminimal_theme": "^1.5"
     },
     "replace": {
         "drupal/core": "^8.7"
