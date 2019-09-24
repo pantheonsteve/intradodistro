@@ -497,20 +497,17 @@ function ds_preprocess_ds_layout(&$variables) {
   }
 
   // Create region variables based on the layout settings.
-  if (!empty($layout_settings['wrappers']) && is_array($layout_settings['wrappers'])) {
-
-    foreach ($layout_settings['wrappers'] as $region_name => $wrapper) {
-      // @todo remove from D9, This is deprecated
-      $variables[$region_name . '_classes'] = !empty($layout_settings['classes'][$region_name]) ? ' ' . implode(' ', $layout_settings['classes'][$region_name]) : '';
-      // The new way of doing stuff is creating an attributes object.
-      if (!empty($layout_settings['classes'][$region_name])) {
-        $variables[$region_name . '_attributes'] = new Attribute(['class' => $layout_settings['classes'][$region_name]]);
-      }
-      else {
-        $variables[$region_name . '_attributes'] = new Attribute();
-      }
-      $variables[$region_name . '_wrapper'] = !empty($layout_settings['wrappers'][$region_name]) ? $layout_settings['wrappers'][$region_name] : 'div';
+  foreach ($layout_settings['wrappers'] as $region_name => $wrapper) {
+    // @todo remove from D9, This is deprecated
+    $variables[$region_name . '_classes'] = !empty($layout_settings['classes'][$region_name]) ? ' ' . implode(' ', $layout_settings['classes'][$region_name]) : '';
+    // The new way of doing stuff is creating an attributes object.
+    if (!empty($layout_settings['classes'][$region_name])) {
+      $variables[$region_name . '_attributes'] = new Attribute(['class' => $layout_settings['classes'][$region_name]]);
     }
+    else {
+      $variables[$region_name . '_attributes'] = new Attribute();
+    }
+    $variables[$region_name . '_wrapper'] = !empty($layout_settings['wrappers'][$region_name]) ? $layout_settings['wrappers'][$region_name] : 'div';
   }
 
   // Add a layout wrapper.
