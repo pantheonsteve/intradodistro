@@ -1,11 +1,21 @@
-one_column_alt:
-  label: 'One Column - Alt Background Color'
-  category: 'Intrado'
+# Two column bricks.
+bs_2col_bricked:
+  label: 'Two column bricks'
+  category: 'Bootstrap'
   class: '\Drupal\bootstrap_layouts\Plugin\Layout\BootstrapLayoutsBase'
-  template: templates/one-column-alt
-  default_region: main
+  type: partial
+  icon: images/2col-bricked.png
+  template: templates/3.0.0/bs-2col-bricked
   regions:
-    main:
-      label: 'Content'
+    top:
+      label: 'Top'
       classes:
         - col-sm-12
+    top_left:
+      label: 'Top Left'
+      classes:
+        - col-sm-6
+    top_right:
+      label: 'Top Right'
+      classes:
+        - col-sm-6
