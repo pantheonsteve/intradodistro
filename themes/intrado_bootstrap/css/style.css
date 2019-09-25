@@ -10,6 +10,11 @@
     margin-left: auto;
 }
 
+.basic-block-padding{
+  padding-left:35px;
+  padding-right:35px;
+}
+
 .brand-logo{
   max-width:300px;
 }
