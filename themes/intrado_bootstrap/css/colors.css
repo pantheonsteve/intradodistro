@@ -33,6 +33,10 @@ body {
   color: #3b3b3c;
 }
 
+.alt-background-color{
+  background-color: #fa1aff;
+}
+
 a,
 .link {
     color: #0071b3;
