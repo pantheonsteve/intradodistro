@@ -1,6 +1,6 @@
 # Two column bricks.
 bs_2col_bricked:
-  label: 'Two column bricks'
+  label: 'Alt Color Two column bricks'
   category: 'Bootstrap'
   class: '\Drupal\bootstrap_layouts\Plugin\Layout\BootstrapLayoutsBase'
   type: partial
