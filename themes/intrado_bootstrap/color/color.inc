@@ -19,7 +19,8 @@ $info = [
     'titleslogan' => t('Title and slogan'),
     'text' => t('Text color'),
     'link' => t('Link color'),
-    'headings' => t('Headings')
+    'headings' => t('Headings'),
+    'eventsblocks' => t('Events Blocks'),
   ],
   // Pre-defined color schemes.
   'schemes' => [
@@ -38,6 +39,7 @@ $info = [
         'text' => '#3b3b3b',
         'link' => '#0071b3',
         'headings' => '#3b3b3c',
+        'eventsblocks' => '#fa1aff',
       ],
     ],
     'firehouse' => [
@@ -54,7 +56,8 @@ $info = [
         'titleslogan' => '#fffeff',
         'text' => '#888888',
         'link' => '#d6121f',
-        'headings' => '#3b3b3b',
+        'headings' => '#3b3b3c',
+        'eventsblocks' => '#fa1aff',
       ],
     ],
     'ice' => [
@@ -71,7 +74,8 @@ $info = [
         'titleslogan' => '#000000',
         'text' => '#4a4a4a',
         'link' => '#019dbf',
-        'headings' => '#3b3b3b',
+        'headings' => '#3b3b3c',
+        'eventsblocks' => '#fa1aff',
       ],
     ],
     'plum' => [
@@ -88,7 +92,8 @@ $info = [
         'titleslogan' => '#ffffff',
         'text' => '#301313',
         'link' => '#9d408d',
-        'headings' => '#3b3b3b',
+        'headings' => '#3b3b3c',
+        'eventsblocks' => '#fa1aff',
       ],
     ],
     'slate' => [
@@ -105,7 +110,8 @@ $info = [
         'titleslogan' => '#ffffff',
         'text' => '#3b3b3b',
         'link' => '#0073b6',
-        'headings' => '#3b3b3b',
+        'headings' => '#3b3b3c',
+        'eventsblocks' => '#fa1aff',
       ],
     ],
   ],

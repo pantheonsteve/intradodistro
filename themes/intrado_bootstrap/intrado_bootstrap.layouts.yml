@@ -1,0 +1,11 @@
+one_column_alt:
+  label: 'One Column - Alt Background Color'
+  category: 'Intrado'
+  class: '\Drupal\bootstrap_layouts\Plugin\Layout\BootstrapLayoutsBase'
+  template: templates/one-column-alt
+  default_region: main
+  regions:
+    main:
+      label: 'Content'
+      classes:
+        - col-sm-12

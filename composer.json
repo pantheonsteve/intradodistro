@@ -19,7 +19,8 @@
         "drupal/layout_builder_restrictions": "^2.2",
         "drupal/ds": "^3.4",
         "drupal/adminimal_theme": "^1.5",
-        "drupal/image_effects": "^2.3"
+        "drupal/image_effects": "^2.3",
+        "drush/drush": "^9.7"
     },
     "replace": {
         "drupal/core": "^8.7"
