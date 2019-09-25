@@ -29,6 +29,10 @@ body {
     background-color: #1d84c3;
 }
 
+h1, h2, h3, h4, h5 {
+  color: #3b3b3c;
+}
+
 a,
 .link {
     color: #0071b3;
