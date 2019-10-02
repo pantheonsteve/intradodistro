@@ -1,0 +1,7 @@
+stockinfo-block:
+  version: 1.x
+  css:
+    layout:
+      css/bootstrap/bootstrap.css: {}
+    component:
+      css/stockinfo-block.css: {}

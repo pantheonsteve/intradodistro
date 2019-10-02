@@ -1,0 +1,17 @@
+.stock {
+    text-align: center;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    padding: 25px 10px;
+    background: #EFEFEF;
+    vertical-align: middle;
+}
+
+.stat {
+  font-size: 1.0em;
+}
+
+.stat-label {
+  font-size: 0.5em;
+}
