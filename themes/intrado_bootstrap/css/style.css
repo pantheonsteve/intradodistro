@@ -15,6 +15,10 @@
   padding-right:35px;
 }
 
+.alt-background-color, .container {
+  margin-bottom: 20px;
+}
+
 .brand-logo{
   max-width:300px;
 }
@@ -147,4 +151,57 @@ color: white;
 padding: 15px;
 font-size: 2rem;
 text-shadow: 0px 0px 5px #82786f,0px 0px 5px #82786f,0px 0px 30px rgba(0,0,0,0.85);
+}
+
+.event {
+  font-weight: normal;
+line-height: 1.5;
+-webkit-font-smoothing: antialiased;
+font-size: 14px;
+font-family: "AmericanSans",Helvetica,Arial,sans-serif;
+color: #0a0a0a;
+text-align: center;
+box-sizing: inherit;
+padding: 1rem 1rem 1rem 0;
+display: table;
+}
+
+.event-dateonly {
+  font-weight: normal;
+line-height: 1.5;
+-webkit-font-smoothing: antialiased;
+font-size: 14px;
+font-family: "AmericanSans",Helvetica,Arial,sans-serif;
+color: #0a0a0a;
+text-align: center;
+box-sizing: inherit;
+margin: 0;
+padding: 0;
+}
+
+.field--name-field-date {
+  font-weight: normal;
+-webkit-font-smoothing: antialiased;
+font-family: "AmericanSans",Helvetica,Arial,sans-serif;
+box-sizing: inherit;
+margin: 0;
+padding: 0;
+text-align: center;
+font-size: 1rem;
+color: #000;
+line-height: normal;
+width: 100px;
+margin-right: 2%;
+display: block;
+border-right: 1px solid #ddd;
+}
+
+.block-stockinfoblock {
+  margin-top: 30px;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.nav-item {
+  padding-right:1.5rem; position: relative; display: block; padding: 0.7rem 1rem; line-height: 1;
 }
