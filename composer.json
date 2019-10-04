@@ -20,7 +20,9 @@
         "drupal/ds": "^3.4",
         "drupal/adminimal_theme": "^1.5",
         "drupal/image_effects": "^2.3",
-        "drush/drush": "^9.7"
+        "drush/drush": "^9.7",
+        "drupal/bootstrap_simple_carousel": "^1.2",
+        "drupal/bootstrap_ce": "^1.0"
     },
     "replace": {
         "drupal/core": "^8.7"

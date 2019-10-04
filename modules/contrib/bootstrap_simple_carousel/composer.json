@@ -1,0 +1,20 @@
+{
+  "name": "drupal/bootstrap_simple_carousel",
+  "description": "The module provides the simple bootstrap carousel.",
+  "type": "drupal-module",
+  "homepage": "https://drupal.org/project/bootstrap_simple_carousel",
+  "authors": [
+    {
+      "name": "Dzianis Kel (asmdk)",
+      "email": "asm32dk@gmail.com",
+      "homepage": "https://www.drupal.org/u/asmdk",
+      "role": "maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://drupal.org/project/issues/bootstrap_simple_carousel",
+    "source": "https://cgit.drupalcode.org/bootstrap_simple_carousel"
+  },
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev"
+}

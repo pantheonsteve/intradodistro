@@ -1,0 +1,6 @@
+name: ir-starter-site
+recipe: pantheon
+config:
+  framework: drupal8
+  site: ir-starter-site
+  id: cd1db4f4-7e8e-4c6a-a154-f8ba3e40f82b

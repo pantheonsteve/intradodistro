@@ -13,5 +13,14 @@ function stockinfo_theme($existing, $type, $theme, $path) {
       ],
       'template' => 'stockinfoblock',
     ],
+    'stockinfo_block_square' => [
+      'variables' => [
+        'symbol' => NULL,
+        'price' => NULL,
+        'change' => NULL,
+        'volume' => NULL,
+      ],
+      'template' => 'stockinfoblocksquare',
+    ],
   ];
 }

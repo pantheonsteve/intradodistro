@@ -1,0 +1,64 @@
+{%
+    set classes = [
+    'block',
+    'block-' ~ configuration.provider|clean_class,
+    'block-bootstrap-simple-carousel',
+]
+%}
+<div{{ attributes.addClass(classes) }}>
+    {{ title_prefix }}
+    {% if label %}
+        <h2{{ title_attributes.addClass('visually-hidden') }}>{{ label }}</h2>
+    {% endif %}
+    {{ title_suffix }}
+    {% block content %}
+        <div
+            id="carousel-block-generic"
+            class="carousel slide"
+            data-ride="carousel"
+            data-wrap="{% if settings.get('wrap') == 1  %}true{% else %}false{% endif %}"
+            data-interval="{{ settings.get('interval') }}"
+            data-pause="{% if settings.get('pause')  %}hover{% endif %}"
+        >
+            <!-- Indicators -->
+            {% if settings.get('indicators')  %}
+                <ol class="carousel-indicators">
+                    {% for item in items %}
+                        <li
+                            data-target="#carousel-block-generic" data-slide-to="{{ loop.index - 1 }}"
+                            class="indicator-item{{ loop.first ? ' active' : '' }}">
+                        </li>
+                    {% endfor %}
+                </ol>
+            {% endif %}
+
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner">
+                {% for item in items %}
+                    <div class="carousel-item item{{ loop.first ? ' active' : '' }}">
+                        <img
+                                src="{{ item.image_url }}"
+                                class="carousel-image{% if settings.get('image_fluid')  %} img-fluid{% endif %}"
+                                alt="{{ item.image_alt }}"
+                                title="{{ item.image_title }}"
+                        >
+                        <div class="carousel-caption">
+                            {% if item.caption_title  %}<h3> {{ item.caption_title }} </h3>{% endif %}
+                            {% if item.caption_text  %}<p> {{ item.caption_text }} </p>{% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Controls -->
+            {% if settings.get('controls')  %}
+                <a class="left carousel-control carousel-control-prev" href="#carousel-block-generic" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left carousel-control-prev-icon"></span>
+                </a>
+                <a class="right carousel-control carousel-control-next" href="#carousel-block-generic" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right carousel-control-next-icon"></span>
+                </a>
+            {% endif %}
+        </div>
+    {% endblock %}
+</div>

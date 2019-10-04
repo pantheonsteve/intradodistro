@@ -19,3 +19,23 @@ bs_2col_bricked:
       label: 'Top Right'
       classes:
         - col-sm-6
+bs_3col:
+  label: 'Triptic Layout'
+  category: 'Intrado'
+  class: '\Drupal\bootstrap_layouts\Plugin\Layout\BootstrapLayoutsBase'
+  type: partial
+  icon: images/3col.png
+  template: templates/bs-3col
+  regions:
+    left:
+      label: 'Left'
+      classes:
+        - col-sm-4
+    middle:
+      label: 'Middle'
+      classes:
+        - col-sm-4
+    right:
+      label: 'Right'
+      classes:
+        - col-sm-4

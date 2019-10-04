@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function bootstrap_ce_theme() {
+  return [
+    'bootstrap_ce_formatter' => [
+      'variables' => [
+        'entities' => NULL,
+        'interval' => 0,
+        'entity_id' => 0,
+        'carousel_id' => 'carousel-0',
+        'field_name' => '',
+        'bundle' => ''
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme_suggestions().
+ */
+function bootstrap_ce_theme_suggestions_bootstrap_ce_formatter(array $variables) {
+  $suggestions = [];
+
+  $suggestions[] = $variables['theme_hook_original'] . '__' . $variables['bundle'];
+  $suggestions[] = $variables['theme_hook_original'] . '__' . $variables['field_name'];
+  $suggestions[] = $variables['theme_hook_original'] . '__' . $variables['bundle'] . '_' . $variables['field_name'];
+  $suggestions[] = $variables['theme_hook_original'] . '__' . $variables['entity_id'].'_'.$variables['field_name'];
+
+  return $suggestions;
+}

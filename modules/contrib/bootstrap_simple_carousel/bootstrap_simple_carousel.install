@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * @file
+ * Defines install of bootstrap simple carousel.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function bootstrap_simple_carousel_schema() {
+  $schema['bootstrap_simple_carousel'] = [
+    'description' => 'Items of the carousel module.',
+    'fields' => [
+      'cid' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'image_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'image_alt' => [
+        'type' => 'varchar_ascii',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'image_title' => [
+        'type' => 'varchar_ascii',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'caption_title' => [
+        'type' => 'varchar_ascii',
+        'length' => 100,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'caption_text' => [
+        'type' => 'varchar_ascii',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'status' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+      ],
+    ],
+    'primary key' => ['cid'],
+  ];
+
+  return $schema;
+}

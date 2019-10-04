@@ -1,0 +1,21 @@
+name: 'Bootstrap Simple Carousel'
+type: module
+description: 'Provide a bootstrap carousel.'
+package: Media
+
+type: module
+# core: 8.x
+
+dependencies:
+  - drupal:image
+  - drupal:block
+
+configure: bootstrap_simple_carousel.admin_settings
+
+php: 7.0
+
+# Information added by Drupal.org packaging script on 2018-09-21
+version: '8.x-1.2'
+core: '8.x'
+project: 'bootstrap_simple_carousel'
+datestamp: 1537536999

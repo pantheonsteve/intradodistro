@@ -1,0 +1,28 @@
+bootstrap_simple_carousel.settings:
+  type: config_object
+  label: 'bootstrap simple carousel settings'
+  mapping:
+    bootstrap_simple_carousel:
+      type: mapping
+      mapping:
+        interval:
+          type: integer
+          label: 'Interval:'
+        wrap:
+          type: integer
+          label: 'Wrap:'
+        pause:
+          type: integer
+          label: 'Pause:'
+        indicators:
+          type: integer
+          label: 'Indicators:'
+        controls:
+          type: integer
+          label: 'Controls:'
+        assets:
+          type: integer
+          label: 'Assets:'
+        image_style:
+          type: varchar
+          label: 'Image style:'

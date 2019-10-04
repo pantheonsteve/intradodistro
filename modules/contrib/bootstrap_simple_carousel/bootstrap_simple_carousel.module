@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * @file
+ * Defines bootstrap simple carousel.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\bootstrap_simple_carousel\Service\CarouselService;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_help().
+ */
+function bootstrap_simple_carousel_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.bootstrap_simple_carousel':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The module provides the carousel block.  It uses the <a href="https://getbootstrap.com/docs/3.3/javascript/#carousel">bootstrap carousel</a>') . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Settings') . '</dt>';
+      $output .= '<dd>' . t('The <em>settings</em> of the carousel can be configured @carouselService', [
+        'carouselService ' => CarouselService::getInstance()
+          ->renderLink(Url::fromRoute('bootstrap_simple_carousel.admin_settings'), t('here')) . '.',
+      ]) . '</dd>';
+      $output .= '<dt>' . t('interval') . '</dt>';
+      $output .= '<dd>' . t('The amount of time to delay between automatically cycling an item. If false, carousel will not automatically cycle.') . '</dd>';
+      $output .= '<dt>' . t('pause') . '</dt>';
+      $output .= '<dd>' . t('If set to "hover", pauses the cycling of the carousel on mouseenter and resumes the cycling of the carousel on mouseleave. If set to null, hovering over the carousel won\'t pause it.') . '</dd>';
+      $output .= '<dt>' . t('wrap') . '</dt>';
+      $output .= '<dd>' . t('Whether the carousel should cycle continuously or have hard stops.') . '</dd>';
+      $output .= '<dt>' . t('indicators') . '</dt>';
+      $output .= '<dd>' . t('Show indicators, that allow to switch on the separate carousel item') . '</dd>';
+      $output .= '<dt>' . t('controls') . '</dt>';
+      $output .= '<dd>' . t('Show controls, that allow to switch to the next/prev carousel item') . '</dd>';
+      $output .= '<dt>' . t('image_style') . '</dt>';
+      $output .= '<dd>' . t('Setting up the image style for carousel item') . '</dd>';
+      $output .= '<dt>' . t('assets') . '</dt>';
+      $output .= '<dd>' . t('If you using the non-bootstrap theme, check this setting to include bootstrap js/css files (v.4.0.0)') . '</dd>';
+      $output .= '<dd>' . t('if you will be use the image styles for bootstrap items, you need to set up the same width for the "bootstrap carousel" container') . '</dd>';
+      $output .= '</dl>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bootstrap_simple_carousel_theme($existing, $type, $theme, $path) {
+  $variables = [
+    'bootstrap_simple_carousel_block' => [
+      'variables' => [
+        'title' => '',
+        'items' => NULL,
+        'settings' => NULL,
+      ],
+      'template' => 'bootstrap--simple--carousel--block',
+    ],
+  ];
+
+  return $variables;
+}

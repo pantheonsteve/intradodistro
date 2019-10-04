@@ -1,0 +1,39 @@
+bootstrap_simple_carousel.admin_settings:
+  path: '/admin/config/media/bootstrap_simple_carousel'
+  defaults:
+    _form: '\Drupal\bootstrap_simple_carousel\Form\SettingsForm'
+    _title: 'Bootstrap Simple Carousel settings'
+  requirements:
+    _permission: 'administer site configuration'
+
+bootstrap_simple_carousel.add:
+  path: '/admin/structure/bootstrap_simple_carousel/add'
+  defaults:
+    _form: '\Drupal\bootstrap_simple_carousel\Form\EditForm'
+    _title: 'Bootstrap simple carousel - add image'
+  requirements:
+    _permission: 'access bootstrap simple carousel'
+
+bootstrap_simple_carousel.edit:
+  path: '/admin/structure/bootstrap_simple_carousel/edit/{id}'
+  defaults:
+    _form: '\Drupal\bootstrap_simple_carousel\Form\EditForm'
+    _title: 'Bootstrap simple carousel - edit image'
+  requirements:
+    _permission: 'access bootstrap simple carousel'
+
+bootstrap_simple_carousel.delete:
+  path: '/admin/structure/bootstrap_simple_carousel/delete/{id}'
+  defaults:
+    _form: '\Drupal\bootstrap_simple_carousel\Form\DeleteForm'
+    _title: 'Bootstrap simple carousel - remove image'
+  requirements:
+    _permission: 'access bootstrap simple carousel'
+
+bootstrap_simple_carousel.table:
+  path: '/admin/structure/bootstrap_simple_carousel'
+  defaults:
+    _form: '\Drupal\bootstrap_simple_carousel\Form\ItemsForm'
+    _title: 'Bootstrap simple carousel items'
+  requirements:
+    _permission: 'access bootstrap simple carousel'

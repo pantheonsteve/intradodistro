@@ -1,0 +1,9 @@
+bootstrap_simple_carousel:
+  interval: 3000
+  wrap: 1
+  pause: 1
+  indicators: 1
+  controls: 1
+  assets: 0
+  image_fluid: 1
+  image_style: []

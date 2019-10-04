@@ -1,0 +1,13 @@
+bootstrap_simple_carousel.admin:
+  title: 'Bootstrap Simple Carousel settings'
+  description: 'Provide a carousel settings for the block'
+  parent: system.admin_config_media
+  route_name: bootstrap_simple_carousel.admin_settings
+  weight: 100
+
+bootstrap_simple_carousel.items:
+  title: 'Bootstrap simple carousel items'
+  description: 'Provide list of items for bootstrap simple carousel'
+  parent: system.admin_structure
+  route_name: bootstrap_simple_carousel.table
+  weight: 100
