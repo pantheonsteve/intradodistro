@@ -23,6 +23,13 @@
   max-width:300px;
 }
 
+.alt-background-color, .alt-background-color-alt{
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}
+
 .img {
   -webkit-font-smoothing: antialiased;
 cursor: pointer;
@@ -50,7 +57,6 @@ transition: filter 0.3s;
 .layout {
   -webkit-font-smoothing: antialiased;
 cursor: pointer;
-color: #D52B1E;
 box-sizing: inherit;
 border: 0;
 font: inherit;

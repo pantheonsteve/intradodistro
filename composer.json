@@ -22,7 +22,8 @@
         "drupal/image_effects": "^2.3",
         "drush/drush": "^9.7",
         "drupal/bootstrap_simple_carousel": "^1.2",
-        "drupal/bootstrap_ce": "^1.0"
+        "drupal/bootstrap_ce": "^1.0",
+        "drupal/fontyourface": "^3.2"
     },
     "replace": {
         "drupal/core": "^8.7"

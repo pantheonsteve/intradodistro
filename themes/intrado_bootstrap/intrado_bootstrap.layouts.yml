@@ -1,11 +1,34 @@
-# Two column bricks.
+bs_1col_alt:
+  label: 'Alt Color Single Column'
+  category: 'Bootstrap'
+  class: '\Drupal\bootstrap_layouts\Plugin\Layout\BootstrapLayoutsBase'
+  type: partial
+  icon: images/1col.png
+  template: templates/1col-alt
+  regions:
+    main:
+      label: 'Main'
+      classes:
+        - col-sm-12
+bs_1col_alt_alt:
+  label: 'Alt(2) Color Single Column'
+  category: 'Bootstrap'
+  class: '\Drupal\bootstrap_layouts\Plugin\Layout\BootstrapLayoutsBase'
+  type: partial
+  icon: images/1col.png
+  template: templates/1col-alt-alt
+  regions:
+    main:
+      label: 'Main'
+      classes:
+        - col-sm-12
 bs_2col_bricked:
   label: 'Alt Color Two column bricks'
   category: 'Bootstrap'
   class: '\Drupal\bootstrap_layouts\Plugin\Layout\BootstrapLayoutsBase'
   type: partial
   icon: images/2col-bricked.png
-  template: templates/3.0.0/bs-2col-bricked
+  template: templates/bs-2col-bricked
   regions:
     top:
       label: 'Top'

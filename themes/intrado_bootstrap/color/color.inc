@@ -20,7 +20,8 @@ $info = [
     'text' => t('Text color'),
     'link' => t('Link color'),
     'headings' => t('Headings'),
-    'eventsblocks' => t('Events Blocks'),
+    'altcolorsection' => t('Alt Color Section'),
+    'altcolorsectionalt' => t('Alt(2) Color Section'),
   ],
   // Pre-defined color schemes.
   'schemes' => [
@@ -39,7 +40,8 @@ $info = [
         'text' => '#3b3b3b',
         'link' => '#0071b3',
         'headings' => '#3b3b3c',
-        'eventsblocks' => '#fa1aff',
+        'altcolorsection' => '#fa1aff',
+        'altcolorsectionalt' => '#fa1afe',
       ],
     ],
     'firehouse' => [
@@ -57,7 +59,8 @@ $info = [
         'text' => '#888888',
         'link' => '#d6121f',
         'headings' => '#3b3b3c',
-        'eventsblocks' => '#fa1aff',
+        'altcolorsection' => '#fa1aff',
+        'altcolorsectionalt' => '#fa1af0',
       ],
     ],
     'ice' => [
@@ -75,7 +78,8 @@ $info = [
         'text' => '#4a4a4a',
         'link' => '#019dbf',
         'headings' => '#3b3b3c',
-        'eventsblocks' => '#fa1aff',
+        'altcolorsection' => '#fa1aff',
+        'altcolorsectionalt' => '#fa1af0',
       ],
     ],
     'plum' => [
@@ -93,7 +97,8 @@ $info = [
         'text' => '#301313',
         'link' => '#9d408d',
         'headings' => '#3b3b3c',
-        'eventsblocks' => '#fa1aff',
+        'altcolorsection' => '#fa1aff',
+        'altcolorsectionalt' => '#fa1af0',
       ],
     ],
     'slate' => [
@@ -111,7 +116,8 @@ $info = [
         'text' => '#3b3b3b',
         'link' => '#0073b6',
         'headings' => '#3b3b3c',
-        'eventsblocks' => '#fa1aff',
+        'altcolorsection' => '#fa1aff',
+        'altcolorsectionalt' => '#fa1af0',
       ],
     ],
   ],

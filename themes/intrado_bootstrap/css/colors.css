@@ -37,6 +37,10 @@ body {
   background-color: #fa1aff;
 }
 
+.alt-background-color-alt {
+    background-color: #fa1afe;
+}
+
 a,
 .link {
     color: #0071b3;
