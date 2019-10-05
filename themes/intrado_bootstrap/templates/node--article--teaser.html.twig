@@ -75,7 +75,9 @@
 <div class="container">
 <div class="card alt-background-color-alt">
   {% if content.field_image['#items'] %}
-  <img src="{{file_url(content.field_image['#items'].entity.uri.value) }}" class="card-img-top" alt="...">
+  <div style="height: 200px; width: 100%; overflow: hidden;" class="card-img-top">
+    <img src="{{file_url(content.field_image['#items'].entity.uri.value) }}" alt="..." style="max-width: 500px;">
+  </div>
   {% endif %}
   <div class="card-body">
   <h2{{ title_attributes.addClass('node__title') }} class="card-title">
