@@ -76,7 +76,7 @@
 <div class="card alt-background-color-alt">
   {% if content.field_image['#items'] %}
   <div style="height: 200px; width: 100%; overflow: hidden;" class="card-img-top">
-    <img src="{{file_url(content.field_image['#items'].entity.uri.value) }}" alt="..." style="max-width: 500px; height: 200px;">
+    <img src="{{file_url(content.field_image['#items'].entity.uri.value) }}" alt="..." style="width: 500px; min-height: 200px;">
   </div>
   {% endif %}
   <div class="card-body">
