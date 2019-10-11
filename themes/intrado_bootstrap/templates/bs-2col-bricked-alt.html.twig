@@ -1,0 +1,50 @@
+{#
+/**
+ * @file
+ * Bootstrap Layouts: "2 Columns (stacked)" template.
+ *
+ * Available layout variables:
+ * - wrapper: Wrapper element for the layout container.
+ * - attributes: Wrapper attributes for the layout container.
+ *
+ * Available region variables:
+ * - top
+ * - top_left
+ * - top_right
+ * - middle
+ * - bottom_left
+ * - bottom_right
+ * - bottom
+ *
+ * Each region variable contains the following properties:
+ * - wrapper: The HTML element to use to wrap this region.
+ * - attributes: The HTML attributes to use on the wrapper for this region.
+ * - content: The content to go inside the wrapper for this region.
+ */
+#}
+<div class="alt-background-color-alt">
+<div class="container">
+  <{{ wrapper }}{{ attributes }}>
+    {{ title_suffix.contextual_links }}
+
+    {% if top.content %}
+    <{{ top.wrapper }}{{ top.attributes }}>
+      {{ top.content }}
+    </{{ top.wrapper }}>
+    {% endif %}
+
+    {% if top_left.content %}
+    <{{ top_left.wrapper }}{{ top_left.attributes }}>
+      {{ top_left.content }}
+    </{{ top_left.wrapper }}>
+    {% endif %}
+
+    {% if top_right.content %}
+    <{{ top_right.wrapper }}{{ top_right.attributes }}>
+      {{ top_right.content }}
+    </{{ top_right.wrapper }}>
+    {% endif %}
+
+  </{{ wrapper }}>
+  </div>
+</div>

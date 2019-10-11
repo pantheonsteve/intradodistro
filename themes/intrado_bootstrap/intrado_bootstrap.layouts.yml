@@ -42,6 +42,26 @@ bs_2col_bricked:
       label: 'Top Right'
       classes:
         - col-sm-6
+bs_2col_bricked_alt:
+  label: 'Alt Color (2) Two column bricks'
+  category: 'Bootstrap'
+  class: '\Drupal\bootstrap_layouts\Plugin\Layout\BootstrapLayoutsBase'
+  type: partial
+  icon: images/2col-bricked.png
+  template: templates/bs-2col-bricked-alt
+  regions:
+    top:
+      label: 'Top'
+      classes:
+        - col-sm-12
+    top_left:
+      label: 'Top Left'
+      classes:
+        - col-sm-6
+    top_right:
+      label: 'Top Right'
+      classes:
+        - col-sm-6
 bs_3col:
   label: 'Triptic Layout'
   category: 'Intrado'
