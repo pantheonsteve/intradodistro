@@ -1,4 +1,0 @@
-services:
-  stockinfo:
-    class: Drupal\stockinfo\StockInfoClient
-    arguments: ['@http_client_factory']
