@@ -1,0 +1,8 @@
+name: Stock Information
+description: Creates custom Stock Information blocks for Intrado Investor Relations sites.
+package: Intrado
+type: module
+version: 1.0
+core: 8.x
+dependencies:
+  - drupal:block

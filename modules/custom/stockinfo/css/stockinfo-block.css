@@ -1,0 +1,36 @@
+.stock {
+  text-align: center;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  padding: 25px 10px;
+  background: #EFEFEF;
+  vertical-align: middle;
+}
+
+.stock.name {
+  background-color: #1A3C70;
+  color: #fff;
+}
+
+.stock.change.up {
+  background-color: #4BAC81;
+  color: #fff;
+}
+.stock.change.down {
+  background-color: darkred;
+  color: #fff;
+}
+
+.stat {
+  font-size: 1.0em;
+}
+
+.stat-label {
+  font-size: 0.5em;
+}
+
+/* Hide block label */
+.block-stockinfo h2 {
+  display: none;
+}
