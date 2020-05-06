@@ -132,22 +132,13 @@ _slack_notification($secrets['slack_url'], $secrets['slack_channel'], $secrets['
  */
 function _get_secrets($requiredKeys, $defaults)
 {
-  $secretsFile = $_SERVER['HOME'] . '/files/private/secrets.json';
-  if (!file_exists($secretsFile)) {
-    die('No secrets file found. Aborting!');
+  try {
+    // Get Slack API key.
+    $secrets = json_decode(file_get_contents('https://dev-intrado-api.pantheonsite.io/quicksilver.php?name=intrado'), 1);
+  } catch(Exception $ex) {
+      print_r($ex);
+      die("Could not fetch API keys.");
   }
-  $secretsContents = file_get_contents($secretsFile);
-  $secrets = json_decode($secretsContents, 1);
-  if ($secrets == false) {
-    die('Could not parse json in secrets file. Aborting!');
-  }
-  $secrets += $defaults;
-  $missing = array_diff($requiredKeys, array_keys($secrets));
-  if (!empty($missing)) {
-    die('Missing required keys in json secrets file: ' . implode(',', $missing) . '. Aborting!');
-  }
-  return $secrets;
-}
 
 /**
  * Send a notification to slack
