@@ -1,7 +1,7 @@
 <?php
 
 // Quick debug
-var_dump($_GET);
+print_r($_GET);
 
 // Important constants :)
 $pantheon_yellow = '#EFD01B';
