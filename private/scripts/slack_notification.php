@@ -40,7 +40,7 @@ $fields = array(
     'short' => 'true'
   ),
   array(
-    'title' => 'View Dashboard',
+    'title' => 'View Dashboard:',
     'value' => '<https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>',
     'short' => 'true'
   ),
