@@ -7,7 +7,7 @@ workflows:
     after:
         - type: webphp
           description: Post to Slack after site creation
-          script: private/scripts/slack_notification.php
+          script: private/scripts/slack_notification.php?channel=customer-onboarding
   create_cloud_development_environment:
     after:
         - type: webphp
@@ -22,7 +22,7 @@ workflows:
     after:
         - type: webphp
           description: Post to Slack after code commit
-          script: private/scripts/slack_notification.php
+          script: private/scripts/slack_notification.php?channel=tech-escalation-team
   clear_cache:
     after:
         - type: webphp

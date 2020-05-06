@@ -1,5 +1,8 @@
 <?php
 
+// Quick debug
+var_dump($_GET);
+
 // Important constants :)
 $pantheon_yellow = '#EFD01B';
 
@@ -9,7 +12,7 @@ $pantheon_yellow = '#EFD01B';
 $defaults = array(
   'slack_username' => 'Pantheon-Quicksilver',
   'always_show_text' => false,
-  'slack_channel' => '',
+  'slack_channel' => (!empty($_GET['channel'])) ? $_GET['channel'] : '',
 );
 
 // Load our hidden credentials.
