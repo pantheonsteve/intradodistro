@@ -15,6 +15,18 @@ $defaults = array(
 // See the README.md for instructions on storing secrets.
 $secrets = _get_secrets(array('slack_url'), $defaults);
 
+// Override webhook if channel is provided and available.
+if (!empty($secrets['slack_channels'])) {
+  // If we have the query parameter available, and it's available in the API, use it.
+  if (!empty($_GET['channel']) && !empty($secrets['slack_channels'][$_GET['channel']])) {
+    $secrets['slack_url'] = $secrets['slack_channels'][$_GET['channel']];
+  }
+}
+
+print("\n");
+print_r($secrets);
+print("\n");
+
 // Build an array of fields to be rendered with Slack Attachments as a table
 // attachment-style formatting:
 // https://api.slack.com/docs/attachments
@@ -40,8 +52,8 @@ $fields = array(
     'short' => 'true'
   ),
   array(
-    'title' => 'View Dashboard:',
-    'value' => '<https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>',
+    'title' => 'View Dashboard',
+    'value' => '<https://dashboard.pantheon.io/sites/'. $_ENV['PANTHEON_SITE'] .'#'. $_ENV['PANTHEON_ENVIRONMENT'] .'/deploys|View Dashboard>',
     'short' => 'true'
   ),
 );
@@ -52,7 +64,7 @@ switch($_POST['wf_type']) {
   case 'deploy':
     // Find out what tag we are on and get the annotation.
     $deploy_tag = `git describe --tags`;
-    $deploy_message = $_POST['deploy_message'];
+    $deploy_message = !empty($_POST['deploy_message']) ? $_POST['deploy_message'] : "";
 
     // Prepare the slack payload as per:
     // https://api.slack.com/incoming-webhooks
@@ -85,6 +97,7 @@ switch($_POST['wf_type']) {
     // https://api.slack.com/incoming-webhooks
     $text = 'Code sync to the ' . $_ENV['PANTHEON_ENVIRONMENT'] . ' environment of ' . $_ENV['PANTHEON_SITE_NAME'] . ' by ' . $_POST['user_email'] . "!\n";
     $text .= 'Most recent commit: ' . rtrim($hash) . ' by ' . rtrim($committer) . ': ' . $message;
+    
     // Build an array of fields to be rendered with Slack Attachments as a table
     // attachment-style formatting:
     // https://api.slack.com/docs/attachments
@@ -122,7 +135,7 @@ $attachment = array(
   'fields' => $fields
 );
 
-_slack_notification($secrets['slack_url'], $secrets['slack_channel'], $secrets['slack_username'], $text, $attachment, $secrets['always_show_text']);
+_slack_notification($secrets['slack_url'], $secrets['slack_username'], $text, $attachment, $secrets['always_show_text']);
 
 
 /**
@@ -139,17 +152,26 @@ function _get_secrets($requiredKeys, $defaults)
       print_r($ex);
       die("Could not fetch API keys.");
   }
+  
+  if ($secrets == false) {
+    die('Could not parse json in secrets file. Aborting!');
+  }
+  $secrets += $defaults;
+  $missing = array_diff($requiredKeys, array_keys($secrets));
+  if (!empty($missing)) {
+    die('Missing required keys in json secrets file: ' . implode(',', $missing) . '. Aborting!');
+  }
+  return $secrets;
 }
 
 /**
  * Send a notification to slack
  */
-function _slack_notification($slack_url, $channel, $username, $text, $attachment, $alwaysShowText = false)
+function _slack_notification($slack_url, $username, $text, $attachment, $alwaysShowText = false)
 {
   $attachment['fallback'] = $text;
   $post = array(
     'username' => $username,
-    'channel' => $channel,
     'icon_emoji' => ':lightning_cloud:',
     'attachments' => array($attachment)
   );
@@ -166,6 +188,8 @@ function _slack_notification($slack_url, $channel, $username, $text, $attachment
   curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
   // Watch for messages with `terminus workflows watch --site=SITENAME`
   print("\n==== Posting to Slack ====\n");
+  print("slack_url: " . $slack_url);
+  print("\n\n");
   $result = curl_exec($ch);
   print("RESULT: $result");
   // $payload_pretty = json_encode($post,JSON_PRETTY_PRINT); // Uncomment to debug JSON
