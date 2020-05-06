@@ -93,6 +93,7 @@ switch($_POST['wf_type']) {
     // https://api.slack.com/incoming-webhooks
     $text = 'Code sync to the ' . $_ENV['PANTHEON_ENVIRONMENT'] . ' environment of ' . $_ENV['PANTHEON_SITE_NAME'] . ' by ' . $_POST['user_email'] . "!\n";
     $text .= 'Most recent commit: ' . rtrim($hash) . ' by ' . rtrim($committer) . ': ' . $message;
+    
     // Build an array of fields to be rendered with Slack Attachments as a table
     // attachment-style formatting:
     // https://api.slack.com/docs/attachments
@@ -183,6 +184,8 @@ function _slack_notification($slack_url, $username, $text, $attachment, $alwaysS
   curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
   // Watch for messages with `terminus workflows watch --site=SITENAME`
   print("\n==== Posting to Slack ====\n");
+  print("slack_url: " . $slack_url);
+  print("\n\n");
   $result = curl_exec($ch);
   print("RESULT: $result");
   // $payload_pretty = json_encode($post,JSON_PRETTY_PRINT); // Uncomment to debug JSON
