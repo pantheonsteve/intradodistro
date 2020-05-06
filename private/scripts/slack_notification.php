@@ -9,6 +9,7 @@ $pantheon_yellow = '#EFD01B';
 $defaults = array(
   'slack_username' => 'Pantheon-Quicksilver',
   'always_show_text' => false,
+  'slack_channel' => '',
 );
 
 // Load our hidden credentials.
@@ -40,8 +41,8 @@ $fields = array(
     'short' => 'true'
   ),
   array(
-    'title' => 'View Dashboard:',
-    'value' => '<https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>',
+    'title' => 'View Dashboard',
+    'value' => '<https://dashboard.pantheon.io/sites/'. $_ENV['PANTHEON_SITE'] .'#'. $_ENV['PANTHEON_ENVIRONMENT'] .'/deploys|View Dashboard>',
     'short' => 'true'
   ),
 );
@@ -52,7 +53,7 @@ switch($_POST['wf_type']) {
   case 'deploy':
     // Find out what tag we are on and get the annotation.
     $deploy_tag = `git describe --tags`;
-    $deploy_message = $_POST['deploy_message'];
+    $deploy_message = !empty($_POST['deploy_message']) ? $_POST['deploy_message'] : "";
 
     // Prepare the slack payload as per:
     // https://api.slack.com/incoming-webhooks
@@ -139,6 +140,16 @@ function _get_secrets($requiredKeys, $defaults)
       print_r($ex);
       die("Could not fetch API keys.");
   }
+  
+  if ($secrets == false) {
+    die('Could not parse json in secrets file. Aborting!');
+  }
+  $secrets += $defaults;
+  $missing = array_diff($requiredKeys, array_keys($secrets));
+  if (!empty($missing)) {
+    die('Missing required keys in json secrets file: ' . implode(',', $missing) . '. Aborting!');
+  }
+  return $secrets;
 }
 
 /**
@@ -149,7 +160,7 @@ function _slack_notification($slack_url, $channel, $username, $text, $attachment
   $attachment['fallback'] = $text;
   $post = array(
     'username' => $username,
-    'channel' => $channel,
+    // 'channel' => $channel, // Don't need channel with new webhook system.
     'icon_emoji' => ':lightning_cloud:',
     'attachments' => array($attachment)
   );
