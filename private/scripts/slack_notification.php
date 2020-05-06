@@ -1,8 +1,5 @@
 <?php
 
-// Quick debug
-print_r($_GET);
-
 // Important constants :)
 $pantheon_yellow = '#EFD01B';
 
@@ -12,12 +9,19 @@ $pantheon_yellow = '#EFD01B';
 $defaults = array(
   'slack_username' => 'Pantheon-Quicksilver',
   'always_show_text' => false,
-  'slack_channel' => (!empty($_GET['channel'])) ? $_GET['channel'] : '',
 );
 
 // Load our hidden credentials.
 // See the README.md for instructions on storing secrets.
 $secrets = _get_secrets(array('slack_url'), $defaults);
+
+// Override webhook if channel is provided and available.
+if (!empty($secrets['slack_channels'])) {
+  // If we have the query parameter available, and it's available in the API, use it.
+  if (!empty($_GET['channel']) && !empty($secrets['slack_channels'][$_GET['channel']])) {
+    $secrets['slack_url'] = $secrets['slack_channels'][$_GET['channel']];
+  }
+}
 
 // Build an array of fields to be rendered with Slack Attachments as a table
 // attachment-style formatting:
@@ -126,7 +130,7 @@ $attachment = array(
   'fields' => $fields
 );
 
-_slack_notification($secrets['slack_url'], $secrets['slack_channel'], $secrets['slack_username'], $text, $attachment, $secrets['always_show_text']);
+_slack_notification($secrets['slack_url'], $secrets['slack_username'], $text, $attachment, $secrets['always_show_text']);
 
 
 /**
@@ -158,12 +162,11 @@ function _get_secrets($requiredKeys, $defaults)
 /**
  * Send a notification to slack
  */
-function _slack_notification($slack_url, $channel, $username, $text, $attachment, $alwaysShowText = false)
+function _slack_notification($slack_url, $username, $text, $attachment, $alwaysShowText = false)
 {
   $attachment['fallback'] = $text;
   $post = array(
     'username' => $username,
-    // 'channel' => $channel, // Don't need channel with new webhook system.
     'icon_emoji' => ':lightning_cloud:',
     'attachments' => array($attachment)
   );
