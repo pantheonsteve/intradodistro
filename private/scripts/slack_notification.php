@@ -139,6 +139,7 @@ function _get_secrets($requiredKeys, $defaults)
       print_r($ex);
       die("Could not fetch API keys.");
   }
+}
 
 /**
  * Send a notification to slack
