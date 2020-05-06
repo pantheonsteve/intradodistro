@@ -23,6 +23,10 @@ if (!empty($secrets['slack_channels'])) {
   }
 }
 
+print("\n");
+print_r($secrets);
+print("\n");
+
 // Build an array of fields to be rendered with Slack Attachments as a table
 // attachment-style formatting:
 // https://api.slack.com/docs/attachments
