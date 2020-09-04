@@ -1,1 +1,1 @@
-Red Hat Custom Upstream example for the demo.
+EDP Custom Upstream example for the demo.
