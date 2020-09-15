@@ -1,1 +1,1 @@
-EDP Custom Upstream example for the demo.
+Example of making an update and pushing to the custom upstream. This is central code governance in action!
