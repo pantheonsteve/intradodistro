@@ -1,1 +1,1 @@
-Example of making an update and pushing to the custom upstream. This is central code governance in action!
+Code governance example for Omnicom.
