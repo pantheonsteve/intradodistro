@@ -1,1 +1,1 @@
-Code governance example for Omnicom.
+Code governance example for Boston Medical Center.
