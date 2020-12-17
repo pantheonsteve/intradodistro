@@ -1,1 +1,1 @@
-Code governance example for Boston Medical Center.
+Code governance example for Voya Financial.
