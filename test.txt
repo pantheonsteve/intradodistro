@@ -1,1 +1,1 @@
-Code governance example for Voya Financial.
+Code governance example for Otsuka to show central governance at the global level.
