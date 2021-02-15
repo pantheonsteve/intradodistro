@@ -1,1 +1,1 @@
-Code governance example for ECU.
+Global code covernance example.
