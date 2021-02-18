@@ -1,1 +1,1 @@
-Global code covernance example again.
+Global code covernance example for the final exam.
