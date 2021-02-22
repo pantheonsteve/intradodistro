@@ -1,1 +1,1 @@
-Global code covernance example for the final exam.
+Global code covernance example for the University of Maryland.
