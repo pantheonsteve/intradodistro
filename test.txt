@@ -1,1 +1,1 @@
-Global code covernance example for University of Maryland.
+Global code code governance example for the University of Maryland.
