@@ -1,1 +1,1 @@
-Global code code governance example for the University of Maryland demo.
+Global code code governance example for the Voya demo.
