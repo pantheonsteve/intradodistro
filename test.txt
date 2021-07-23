@@ -1,1 +1,1 @@
-Global code code governance example for the Presales demo.
+Global code code governance example for the Presales demo for Evan.
