@@ -1,1 +1,1 @@
-Global code code governance example for the Presales demo for Evan.
+Global code code governance example for the Presales demo for demonstrating Custom Upstreams to Bernie.
