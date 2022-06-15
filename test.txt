@@ -1,1 +1,1 @@
-Trent University Custom Upstream push example
+PremierTech Demo Example for Custom Upstreams
