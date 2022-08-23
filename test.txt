@@ -1,1 +1,1 @@
-WWF UK Exampel to show how a change on Github gets to Pantheon
+PMMI example to show Custom Upstreams as a replacement for Drupal multisite
