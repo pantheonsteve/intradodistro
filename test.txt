@@ -1,1 +1,1 @@
-PMMI example to show Custom Upstreams as a replacement for Drupal multisite
+Hello GWU! This is an example of a global update.
