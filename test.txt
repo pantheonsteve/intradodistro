@@ -1,1 +1,1 @@
-Hello GWU! This is an example of a global update.
+EDF Custom Upstream update example. I have made a global change, and it should propagate to all sites at once.
